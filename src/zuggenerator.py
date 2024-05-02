@@ -13,9 +13,9 @@ def fen2position(fen):
   position, s, z = {}, 0, 7
   figurenstellung, zugrecht = fen.split()
   for char in figurenstellung:
-    if (s, z) in [(0, 0), (0, 7), (7, 0), (7, 7)]:
+    if (s, z) in [(0, 0), (0, 7), (7, 0), (7, 7)]: 
         s += 1  
-    if char.isalpha():
+    if char.isalpha(): #hier fehlt noch case/übersetzung für knights
         position[(s, z)] = char
         s += 1
     elif char.isnumeric():
@@ -26,7 +26,7 @@ def fen2position(fen):
 
 def ladeFiguren():
   bilder = {}
-  fig2datei = dict(r='redpawn', b='bluepawn')
+  fig2datei = dict(r='redpawn', b='bluepawn') #grafik für knights fehlt noch
   for fig, datei in fig2datei.items():
     bild = pg.image.load(f'GameAI-JumpSturdy\graphics/{datei}.png')
     bilder[fig] = pg.transform.smoothscale(bild, (FELD, FELD))
