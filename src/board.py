@@ -11,6 +11,29 @@ def zeichneBrett(BRETT):
     farbe = '#DFBF93' if feld else '#C5844E'
     pg.draw.rect(fenster, farbe, (*sz2xy(sz), FELD, FELD))
 
+def position2fen(position, zugrecht): #funktioniert nicht komplett (0en fehlen teilweise)
+    fen = ''
+    for z in range(7, -1, -1):
+        empty_count = 0
+        for s in range(8):
+            if (s, z) in [(0, 0), (0, 7), (7, 0), (7, 7)]:
+                continue
+            piece = position.get((s, z))
+            if piece is None:
+                empty_count += 1
+            else:
+                fen += str(empty_count)
+                fen += piece
+                empty_count = 0
+        if empty_count >= 0:
+            fen += str(empty_count)
+        else:
+            fen += '0'
+        if z != 0:
+            fen += '/'
+    fen += ' ' + zugrecht
+    return fen
+
 def fen2position(fen):
   position, s, z = {}, 0, 7
   figurenstellung, zugrecht = fen.split()
@@ -45,10 +68,12 @@ FPS = 40
 fenster = pg.display.set_mode(größe)
 BRETT = {(s, z): s % 2 == z % 2 for s in range(8) for z in range(8) if (s, z) != (0, 0) and (s, z) != (0, 7) and (s, z) != (7, 0) and (s, z) != (7, 7)}
 fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
-fen1 = '3b02/2b2b02/5b0b1/2r0b04/2b3b01/1r1r2r0r0/5r02/2r3 b'
+fen1 = '3b02/22bb02/5b0b1/2r0b04/2b3b01/1r1r2r0r0/5r02/2r3 b'
 FIGUREN = ladeFiguren()
-position, zugrecht = fen2position(fen)
+position, zugrecht = fen2position(fen1)
+fen2= position2fen(position, zugrecht)
 print(position)
+print(fen2)
 weitermachen = True
 clock = pg.time.Clock()
 drag = None
