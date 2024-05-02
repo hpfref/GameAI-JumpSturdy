@@ -53,7 +53,7 @@ def ladeFiguren():
   bilder = {}
   fig2datei = dict(r='redpawn', b='bluepawn') #grafik für knights fehlt noch
   for fig, datei in fig2datei.items():
-    bild = pg.image.load(f'GameAI-JumpSturdy\graphics/{datei}.png')
+    bild = pg.image.load(f'graphics/{datei}.png')
     bilder[fig] = pg.transform.smoothscale(bild, (FELD, FELD))
   return bilder
 
