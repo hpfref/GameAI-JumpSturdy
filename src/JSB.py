@@ -1,6 +1,7 @@
 import pygame as pg
 import zuggenerator as gen
 
+
 def sz2xy(sz):
   return sz[0]*FELD, sz[1]*FELD
 def xy2sz(xy):
