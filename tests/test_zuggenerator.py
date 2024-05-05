@@ -1,13 +1,5 @@
 import unittest
 import timeit
-
-import sys
-import os
-
-# stuff um zuggenerator zu importen, eig müssten wir n virtual environment erstellen glaub ich damit das clean funktioniert
-current_dir = os.path.dirname(__file__)
-src_path = os.path.abspath(os.path.join(current_dir, '..', 'src'))
-sys.path.append(src_path)
 from zuggenerator import legal_moves
 
 
