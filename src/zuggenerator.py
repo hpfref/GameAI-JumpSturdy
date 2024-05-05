@@ -17,7 +17,7 @@ def legal_moves(fen) -> list:
     board, player  = fen_to_board(fen)
     moves = [] # representation hier überlegen, maybe marker mit einbauen ob schlag move, winning move, ... 
 
-    ### BLUE CASE START###
+    ### BLUE CASE START ###
 
     if player == "b": # viel doppelter code durch case blue/red
         # Get indices of blue pieces
