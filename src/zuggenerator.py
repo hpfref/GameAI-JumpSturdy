@@ -145,12 +145,12 @@ def legal_moves(fen) -> list:
                 if index[0] < 6:
 
                     # Check bottom bottom left
-                    if index[1] > 0 and board[index[0]-2, index[1]-1] in rr_moves:
-                        moves.append((index, (index[0]-2, index[1]-1)))  # Append the valid move to the bottom bottom left
+                    if index[1] > 0 and board[index[0]+2, index[1]-1] in rr_moves:
+                        moves.append((index, (index[0]+2, index[1]-1)))  # Append the valid move to the bottom bottom left
 
                     # Check bottom bottom right
-                    if index[1] < 7 and board[index[0]-2, index[1]+1] in rr_moves:
-                        moves.append((index, (index[0]-2, index[1]+1)))  # Append the valid move to the bottom bottom right
+                    if index[1] < 7 and board[index[0]+2, index[1]+1] in rr_moves:
+                        moves.append((index, (index[0]+2, index[1]+1)))  # Append the valid move to the bottom bottom right
   
     ### RED CASE END ###
 
@@ -194,8 +194,15 @@ if __name__ == "__main__":
     fen3 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen4 = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
 
-    moves = legal_moves(fen4)
-    print(f"Legal moves: {translate_moves(moves)}")
+    fen_o_early = "b0b02b0b0/1b01bb0b0b01/2b05/3b04/2r05/3r0r03/1r0r02r0r01/r0r01r0r0r0 r"
+    fen_o_late = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
+    fen_i_early = "b0b0b02bb/1b01b0bb1b01/2b05/5b02/1r06/8/2r0rrr0rr1r0/r0r01r01r0 r"
+    fen_u_early = "bb1b0b0b0b0/b01b0b0b01b01/8/3b04/3r04/2r05/1rr2r0r01r0/1r0r0r0r0r0 r"
+    fen_test = '1b0b01b0b0/3b0b03/1b03b02/2b01b03/4r0r0b01/4r01r01/1rr1rr4/1r0r01r01 b'
+
+    moves = legal_moves(fen_test)
+    print(f"Legal moves: {moves}")
+    print(f"Legal moves translated: {translate_moves(moves)}")
     print(f"Number of legal moves: {len(moves)}")
     #print("Hellow?")
 
