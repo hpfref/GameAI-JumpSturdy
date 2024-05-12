@@ -357,7 +357,7 @@ def benchmark_zuggenerator(fen, reps, legal_moves):
 
 if __name__ == '__main__':
     
-    benchmark = False
+    benchmark = True
     unit_test = True
 
     if benchmark:
