@@ -7,6 +7,7 @@ def random_move(fen):
     if not moves:
         return None
     return random.choice(moves)
+    #return moves[1]
 
 def game_over(fen):
     board, player = fen_to_board(fen)
@@ -29,59 +30,56 @@ def generate_new_board(fen, move):
     board, player = fen_to_board(fen)
     from_pos, to_pos = move
 
-    moving_piece = board[from_pos]
-    target_piece = board[to_pos]
+    if player == "b":
+        # Move logic for blue pieces
+        if board[to_pos] in ["", "r"]:
+            board[to_pos] = "b"
+                    
+        elif board[to_pos] == "rr":
+            board[to_pos] = "rb"
 
-    # Handle the movement of knights
-    if moving_piece in ['rr', 'bb', 'br', 'rb']:
-        # Only the top piece of the knight moves
-        board[from_pos] = moving_piece[1]
-        moving_piece = moving_piece[0]
+        elif board[to_pos] in ["b", "br"]:
+            board[to_pos] = "bb"    
 
-    # Handle stepping on a single piece of the opposite color
-    if target_piece in ['r', 'b'] and moving_piece in ['r', 'b'] and target_piece != moving_piece:
-        # The moving piece eliminates the target piece
-        board[to_pos] = moving_piece
-    elif target_piece == moving_piece:
-        # Handle stepping on a single piece of the same color
-        if moving_piece == 'r':
-            board[to_pos] = 'rr'
-        elif moving_piece == 'b':
-            board[to_pos] = 'bb'
+        # Clear the original position
+        if board[from_pos] == "b":
+            board[from_pos] = ""
+
+        elif board[from_pos] == "bb":
+            board[from_pos] = "b"
+
+        elif board[from_pos] == "rb":
+            board[from_pos] = "r"
+
     else:
-        board[to_pos] = moving_piece
+        # Move logic for red pieces
+        if board[to_pos] in ["", "b"]:
+            board[to_pos] = "r"
+                    
+        elif board[to_pos] == "bb":
+            board[to_pos] = "br"
 
-    # Clear the original position if it's not a knight
-    board[from_pos] = ''
+        elif board[to_pos] in ["r", "rb"]:
+            board[to_pos] = "rr"    
+
+        # Clear the original position
+        if board[from_pos] == "r":
+            board[from_pos] = ""
+
+        elif board[from_pos] == "rr":
+            board[from_pos] = "r"
+
+        elif board[from_pos] == "br":
+            board[from_pos] = "b"
+
+
 
     # Switch the player
     player = 'b' if player == 'r' else 'r'
 
     # Convert the board back to a FEN string
     new_fen = board_to_fen(board, player)
-    print(new_fen)
+    #print(new_fen) # for debugging
     return new_fen
-def play_game(starting_fen):
-    current_fen = starting_fen
-
-    while not game_over(current_fen):
-        move = random_move(current_fen)
-        if move is None:
-            break
-        current_fen = generate_new_board(current_fen, move)
-
-    # Check the final state of the game and print the winner
-    if game_over(current_fen):
-        board, player = fen_to_board(current_fen)
-        for col in range(8):
-            if board[7, col] in ['r', 'rr', 'rb']:
-                print("Red has won!")
-                break
-            elif board[0, col] in ['b', 'bb', 'br']:
-                print("Blue has won!")
-                break
-    return current_fen
 
 
-starting_fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
-play_game(starting_fen)

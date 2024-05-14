@@ -4,46 +4,65 @@ from board import board_to_fen, fen_to_board
 from move_gen import legal_moves
 from gamestate import random_move, game_over, generate_new_board
 
+# THIS FILE IS FOR VISUAL REPRESENTATION OF A GAME(STATE) AND DOESN'T HAVE ANY FUNCTIONALITY FOR OUR AI
+# inspired by: https://github.com/Gravitar64/A-beautiful-code-in-Python/blob/master/Teil_49_Schach_Brett_Figuren.py
 
+def sq2xy(sq):
+        return sq[0]*100, sq[1]*100
+
+def xy2sq(xy):
+    return xy[0] // 100, xy[1] // 100
+
+def load_pieces():
+    images = {}
+    piece_to_file = {
+        'r': 'redpawn', 'b': 'bluepawn', 'rr': 'redtower', 'bb': 'bluetower',
+        'br': 'redonblue', 'rb': 'blueonred'
+    }
+    for piece, filename in piece_to_file.items():
+        image = pg.image.load(f'graphics/{filename}.png')
+        images[piece] = pg.transform.smoothscale(image, (100, 100))
+    return images
+
+def draw_board(board, window):
+    for y in range(8):
+        for x in range(8):
+            color = '#DFBF93' if (x + y) % 2 == 0 else '#C5844E'
+            if board[y, x] == "X":
+                color = (0, 0, 0)
+            pg.draw.rect(window, color, (*sq2xy((x, y)), 100, 100))
+
+def draw_pieces(board, window, PIECES):
+    for y in range(8):
+        for x in range(8):
+            piece = board[y, x]
+            if piece == "X":
+                continue
+            if piece:
+                window.blit(PIECES[piece], sq2xy((x, y)))
+
+def play_game(starting_fen):
+    current_fen = starting_fen
+
+    while not game_over(current_fen):
+        move = random_move(current_fen)
+        if move is None:
+            break
+        current_fen = generate_new_board(current_fen, move)
+
+    # Check the final state of the game and print the winner
+    if game_over(current_fen):
+        board, player = fen_to_board(current_fen)
+        for col in range(8):
+            if board[7, col] in ['r', 'rr', 'rb']:
+                print("Red has won!")
+                break
+            elif board[0, col] in ['b', 'bb', 'br']:
+                print("Blue has won!")
+                break
+    return current_fen
+                    
 if __name__ == "__main__":
-
-    # THIS PART IS FOR VISUAL REPRESENTATION OF FEN's AND DOESN'T HAVE ANY FUNCTIONALITY FOR OUR GAME AI
-    # inspired by: ... github repo ergänzen ig
-
-    def sq2xy(sq):
-        return sq[0]*SQUARE, sq[1]*SQUARE
-
-    def xy2sq(xy):
-        return xy[0] // SQUARE, xy[1] // SQUARE
-
-    def load_pieces():
-        images = {}
-        piece_to_file = {
-            'r': 'redpawn', 'b': 'bluepawn', 'rr': 'redtower', 'bb': 'bluetower',
-            'br': 'redonblue', 'rb': 'blueonred'
-        }
-        for piece, filename in piece_to_file.items():
-            image = pg.image.load(f'graphics/{filename}.png')
-            images[piece] = pg.transform.smoothscale(image, (SQUARE, SQUARE))
-        return images
-
-    def draw_board(board):
-        for y in range(8):
-            for x in range(8):
-                color = '#DFBF93' if (x + y) % 2 == 0 else '#C5844E'
-                if board[y, x] == "X":
-                    color = (0, 0, 0)
-                pg.draw.rect(window, color, (*sq2xy((x, y)), SQUARE, SQUARE))
-
-    def draw_pieces(board):
-        for y in range(8):
-            for x in range(8):
-                piece = board[y, x]
-                if piece == "X":
-                    continue
-                if piece:
-                    window.blit(PIECES[piece], sq2xy((x, y)))
-
     pg.init()
     size = width, height = 800, 800
     SQUARE = width // 8
@@ -94,8 +113,8 @@ if __name__ == "__main__":
                 drag = None
 
         window.fill((0, 0, 0))
-        draw_board(BOARD)
-        draw_pieces(board)
+        draw_board(BOARD,window)
+        draw_pieces(board,window,PIECES)
         if drag:
             rect = drag.get_rect(center=pg.mouse.get_pos())
             window.blit(drag, rect)
