@@ -19,20 +19,17 @@ class gameserver:
         start_piece = self.board[start[0], start[1]]
         end_piece = self.board[end[0], end[1]]
 
-        # Überprüfen, ob das Zielfeld bereits eine Figur enthält
         if end_piece != '':
-            # Logik zum Erstellen eines Turms oder einer gestapelten Figur
-            if start_piece[0] == end_piece[0]:  # Gleiche Farbe, erstelle einen Turm
+            # towers
+            if start_piece[0] == end_piece[0]:  # one color tower
                 new_piece = start_piece[0] * 2
-            else:  # Verschiedene Farben, erstelle eine gestapelte Figur
+            else:  # different colors
                 new_piece = ''.join(sorted(start_piece[0] + end_piece[0]))
 
             self.board[end[0], end[1]] = new_piece
         else:
-            # Bewege die Figur wie gewohnt
             self.board[end[0], end[1]] = start_piece
 
-        # Das Startfeld leeren
         self.board[start[0], start[1]] = ''
 
         self.switch_player()
