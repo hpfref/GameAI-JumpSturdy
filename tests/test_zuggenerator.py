@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
 ###
 import unittest
 import timeit
-from zuggenerator import legal_moves, translate_moves
+from move_gen import legal_moves, translate_moves
 
 
 # Unit-Test for correct output of Zuggenerator
