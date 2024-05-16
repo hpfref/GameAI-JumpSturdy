@@ -82,4 +82,77 @@ def generate_new_board(fen, move):
     #print(new_fen) # for debugging
     return new_fen
 
+def evaluate(fen):
+    piece_values = {'r': 1, 'rr': 2, 'br': 2, 'b': -1, 'bb': -2, 'rb': -2}
+    value = 0
+    # Split the FEN string to get the piece placement
+    piece_placement = fen.split(' ')[0]
 
+    # Iterate over each character in the piece placement
+    for piece in piece_placement:
+        # If the character is in the piece_values dictionary, add its value to the total
+        if piece in piece_values:
+            value += piece_values[piece]
+
+    # Check for game over conditions
+    board, player = fen_to_board(fen)
+
+    # Check if a red piece is on the last row
+    for col in range(8):
+        piece = board[7, col]
+        if piece in ['r', 'rr', 'rb']:
+            return float('inf')  # Red wins
+
+    # Check if a blue piece is on the first row
+    for col in range(8):
+        piece = board[0, col]
+        if piece in ['b', 'bb', 'br']:
+            return float('-inf')  # Blue wins
+    return value
+
+def alpha_beta_search(fen, depth, alpha, beta, maximizing_player):
+    moves = legal_moves(fen)
+    if not moves or depth == 0 or game_over(fen):
+        return evaluate(fen)
+
+    if maximizing_player:
+        max_eval = float('-inf')
+        for move in moves:
+            new_fen = generate_new_board(fen, move)
+            eval = alpha_beta_search(new_fen, depth - 1, alpha, beta, False)
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for move in moves:
+            new_fen = generate_new_board(fen, move)
+            eval = alpha_beta_search(new_fen, depth - 1, alpha, beta, True)
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return min_eval
+
+def iterative_deepening_alpha_beta_search(fen, max_depth, alpha, beta, maximizing_player):
+    for depth in range(1, max_depth + 1):
+        result = alpha_beta_search(fen, depth, alpha, beta, maximizing_player)
+        if result is not None:
+            return result
+    return None
+
+def select_move(fen):
+    best_move = None
+    best_value = float('-inf')
+    max_depth = 3  # or any other value
+
+    for move in legal_moves(fen):
+        new_fen = generate_new_board(fen, move)
+        move_value = iterative_deepening_alpha_beta_search(new_fen, max_depth, float('-inf'), float('inf'), False)
+        if move_value > best_value:
+            best_value = move_value
+            best_move = move
+
+    return best_move

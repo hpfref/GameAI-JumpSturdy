@@ -7,13 +7,13 @@ import numpy as np
 import pygame as pg
 from visuals import load_pieces, draw_board, draw_pieces
 from board import fen_to_board
-from gamestate import random_move, game_over, generate_new_board
+from gamestate import random_move, game_over, generate_new_board, select_move
 
 if __name__ == "__main__":
     pg.init()
     size = width, height = 800, 800
     SQUARE = width // 8
-    FPS = 2
+    FPS = 1
     window = pg.display.set_mode(size)
     BOARD = np.full((8, 8), "", dtype='U10')
     for y in range(8):
@@ -23,9 +23,11 @@ if __name__ == "__main__":
             else:
                 BOARD[y, x] = ""
                 
-    starting_fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
+    starting_fen = '2b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
+    midgame_fen = 'b01b0b0b0b0/1b0b01b01b01/3b01b02/2b05/8/2r0r01rr2/1r04r01/r0r0r0r0r0r0 r'
+    endgame_fen = '6/8/8/4b03/6r01/8/8/6 b'
     PIECES = load_pieces()
-    board, player = fen_to_board(starting_fen)
+    board, player = fen_to_board(endgame_fen)
     running = True
     clock = pg.time.Clock()
 
@@ -35,11 +37,11 @@ if __name__ == "__main__":
             if event.type == pg.QUIT:
                 running = False
 
-        if not game_over(starting_fen):
-            move = random_move(starting_fen)
+        if not game_over(endgame_fen):
+            move = select_move(endgame_fen)
             if move is not None:
-                starting_fen = generate_new_board(starting_fen, move)
-                board, player = fen_to_board(starting_fen)
+                endgame_fen = generate_new_board(endgame_fen, move)
+                board, player = fen_to_board(endgame_fen)
         
         window.fill((0, 0, 0))
         draw_board(BOARD, window)
