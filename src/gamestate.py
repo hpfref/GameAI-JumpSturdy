@@ -94,8 +94,16 @@ def evaluate(fen):
         if piece in piece_values:
             value += piece_values[piece]
 
-    # Check for game over conditions
     board, player = fen_to_board(fen)
+
+    # Add bonus for pieces closer to the opponent's row
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in ['r', 'rr', 'rb']:
+                value += (7 - row) / 7.0  # Red pieces get closer to winning as row number decreases
+            elif piece in ['b', 'bb', 'br']:
+                value -= row / 7.0  # Blue pieces get closer to winning as row number increases
 
     # Check if a red piece is on the last row
     for col in range(8):
@@ -108,6 +116,7 @@ def evaluate(fen):
         piece = board[0, col]
         if piece in ['b', 'bb', 'br']:
             return float('-inf')  # Blue wins
+
     return value
 
 def alpha_beta_search(fen, depth, alpha, beta, maximizing_player):
@@ -146,7 +155,7 @@ def iterative_deepening_alpha_beta_search(fen, max_depth, alpha, beta, maximizin
 def select_move(fen):
     best_move = None
     best_value = float('-inf')
-    max_depth = 3  # or any other value
+    max_depth = 5  # or any other value
 
     for move in legal_moves(fen):
         new_fen = generate_new_board(fen, move)
