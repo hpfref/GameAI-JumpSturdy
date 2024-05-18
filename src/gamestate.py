@@ -83,7 +83,7 @@ def generate_new_board(fen, move):
     return new_fen
 
 def evaluate(fen):
-    piece_values = {'r': 1, 'rr': 2, 'br': 2, 'b': -1, 'bb': -2, 'rb': -2}
+    piece_values = {'r': 1, 'rr': 1, 'br': 1, 'b': -1, 'bb': -1, 'rb': -1}
     value = 0
     # Split the FEN string to get the piece placement
     piece_placement = fen.split(' ')[0]
@@ -100,9 +100,9 @@ def evaluate(fen):
     for row in range(8):
         for col in range(8):
             piece = board[row, col]
-            if piece in ['r', 'rr', 'rb']:
+            if piece in ['r', 'rr', 'br']:
                 value += (7 - row) / 7.0  # Red pieces get closer to winning as row number decreases
-            elif piece in ['b', 'bb', 'br']:
+            elif piece in ['b', 'bb', 'rb']:
                 value -= row / 7.0  # Blue pieces get closer to winning as row number increases
 
     # Check if a red piece is on the last row
@@ -163,5 +163,5 @@ def select_move(fen):
         if move_value > best_value:
             best_value = move_value
             best_move = move
-
+    print(best_value)
     return best_move
