@@ -82,6 +82,8 @@ def generate_new_board(fen, move):
     #print(new_fen) # for debugging
     return new_fen
 
+
+'''OLD EVALUATE
 def evaluate(fen):
     piece_values = {'r': 1, 'rr': 1, 'br': 1, 'b': -1, 'bb': -1, 'rb': -1}
     value = 0
@@ -118,6 +120,60 @@ def evaluate(fen):
             return float('-inf')  # Blue wins
 
     return value
+'''
+
+
+
+def evaluate(fen):
+    piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2.5, 'rb': 1.5}
+    value = 0
+
+    board, player = fen_to_board(fen)
+
+    # Materialwert berechnen
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in piece_values:
+                value += piece_values[piece]
+
+    # Positionelle Faktoren berücksichtigen
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece == 'r':
+                value += (7 - row) * 0.2  # Red pieces closer to winning
+            elif piece == 'b':
+                value -= row * 0.2  # Blue pieces closer to winning
+            elif piece == 'rr':
+                value += (7 - row) * 0.3  # Red towers closer to winning
+            elif piece == 'bb':
+                value -= row * 0.3  # Blue towers closer to winning
+            elif piece == 'br':
+                value += (7 - row) * 0.2  # Red on blue pieces closer to winning
+            elif piece == 'rb':
+                value -= row * 0.2  # Blue on red pieces closer to winning
+
+    # Mobilität berücksichtigen
+    red_moves = legal_moves(board_to_fen(board, 'r'))
+    blue_moves = legal_moves(board_to_fen(board, 'b'))
+    value -= 0.01 * len(red_moves)
+    value += 0.01 * len(blue_moves)
+
+    # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+    for col in range(8):
+        piece = board[7, col]
+        if piece in ['r', 'rr', 'br']:
+            return float('-inf')  # Red wins
+
+    # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+    for col in range(8):
+        piece = board[0, col]
+        if piece in ['b', 'bb', 'rb']:
+            return float('inf')  # Blue wins
+
+    return value
+
 
 def alpha_beta_search(fen, depth, alpha, beta, maximizing_player):
     moves = legal_moves(fen)
