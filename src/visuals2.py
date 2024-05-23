@@ -46,37 +46,6 @@ def draw_pieces(board, window, PIECES):
             if piece:
                 window.blit(PIECES[piece], sq2xy((x, y)))
 
-    def simulate_game(fen_start, window, pieces, clock, fps=40):
-        current_fen = fen_start
-
-        while not game_over(current_fen):
-            # Draw the current board state
-            board, player = fen_to_board(current_fen)
-            window.fill((0, 0, 0))
-            draw_board(board, window)
-            draw_pieces(board, window, pieces)
-            pg.display.flip()
-
-            # Wait for a bit to visually see the move
-            clock.tick(fps)
-
-            # Make a move
-            best_move = select_move(current_fen)
-            if best_move is None:
-                break
-            current_fen = generate_new_board(current_fen, best_move)
-
-        # Check the final state of the game and print the winner
-        if game_over(current_fen):
-            board, player = fen_to_board(current_fen)
-            for col in range(8):
-                if board[7, col] in ['r', 'rr', 'rb']:
-                    print("Red has won!")
-                    break
-                elif board[0, col] in ['b', 'bb', 'br']:
-                    print("Blue has won!")
-                    break
-        return current_fen
 
 
 def simulate_game(fen_start, window, pieces, clock, fps=40):
@@ -107,10 +76,10 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
     if game_over(current_fen):
         board, player = fen_to_board(current_fen)
         for col in range(8):
-            if board[7, col] in ['r', 'rr', 'rb']:
+            if board[7, col] in ['r', 'rr', 'br']:
                 print("Red has won!")
                 break
-            elif board[0, col] in ['b', 'bb', 'br']:
+            elif board[0, col] in ['b', 'bb', 'rb']:
                 print("Blue has won!")
                 break
     return current_fen
