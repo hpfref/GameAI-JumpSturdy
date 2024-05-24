@@ -176,49 +176,49 @@ def evaluate(board):
     value -= 0.1 * len(red_moves)
     value += 0.1 * len(blue_moves)
 
-    print(helper_eval)
+    #print(helper_eval)
 
     return value
 
 
-
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
-        raise TimeoutError("Time limit exceeded")
+        return None, None, False  # Return False to indicate that the search was not completed
 
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
-        if maximizing_player:
-            return evaluate(board), None
-        else: return old_evaluate(board), None
-        #return evaluate(board, player), None
+        return evaluate(board), None, True  # Return True to indicate that the search was completed
 
     if maximizing_player:
         max_eval = float('-inf')
         best_move = None
         for move in moves:
             new_board, new_player = generate_new_board(board, player, move)
-            eval, _ = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, False, start_time, max_time)
+            eval, _, completed = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, False, start_time, max_time)
+            if not completed:
+                return None, None, False  # Return False to indicate that the search was not completed
             if eval > max_eval:
                 max_eval = eval
                 best_move = move
             alpha = max(alpha, eval)
             if beta <= alpha:
                 break
-        return max_eval, best_move
+        return max_eval, best_move, True  # Return True to indicate that the search was completed
     else:
         min_eval = float('inf')
         best_move = None
         for move in moves:
             new_board, new_player = generate_new_board(board, player, move)
-            eval, _ = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, True, start_time, max_time)
+            eval, _, completed = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, True, start_time, max_time)
+            if not completed:
+                return None, None, False  # Return False to indicate that the search was not completed
             if eval < min_eval:
                 min_eval = eval
                 best_move = move
             beta = min(beta, eval)
             if beta <= alpha:
                 break
-        return min_eval, best_move
+        return min_eval, best_move, True  # Return True to indicate that the search was completed
 
 def iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_player):
     start_time = time.time()
@@ -228,20 +228,22 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_pl
 
     while True:
         print(f"Searching depth {depth}")
-        try:
-            value, move = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
-            if (maximizing_player and value > best_value) or (not maximizing_player and value < best_value):
-                best_value = value
-                best_move = move
-            depth += 1
-        except TimeoutError:
-            break
-    print(best_move, best_value)
-    return best_move
+        value, move, completed = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
+        if not completed:
+            break  # Break out of the loop if the search was not completed
+        if (maximizing_player and value > best_value) or (not maximizing_player and value < best_value):
+            best_value = value
+            best_move = move
+            searched_depth = depth
+        depth += 1
+
+    print(best_value)
+    return best_move, searched_depth
 
 def select_move(fen):
     max_time = 3  # Maximum time in seconds for each move
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
-    return iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_player)
-
+    best_move, searched_depth = iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_player)
+    print(f"Best move: {best_move}, Depth: {searched_depth}")
+    return best_move
