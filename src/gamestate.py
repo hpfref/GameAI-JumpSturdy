@@ -231,5 +231,5 @@ def iterative_deepening_alpha_beta_search(fen, max_time):
     return best_move
 
 def select_move(fen):
-    max_time = 3  # Maximum time in seconds for each move
+    max_time = 1  # Maximum time in seconds for each move
     return iterative_deepening_alpha_beta_search(fen, max_time)
