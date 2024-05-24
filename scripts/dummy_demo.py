@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
 import numpy as np
 import pygame as pg
 from visuals import load_pieces, draw_board, draw_pieces
-from board import fen_to_board
+from board import fen_to_board, board_to_fen
 from gamestate import random_move, game_over, generate_new_board, select_move
 
 if __name__ == "__main__":
@@ -37,11 +37,11 @@ if __name__ == "__main__":
             if event.type == pg.QUIT:
                 running = False
 
-        if not game_over(endgame_fen):
-            move = select_move(endgame_fen)
+        if not game_over(board, player):
+            move = random_move(board_to_fen(board, player))
             if move is not None:
-                endgame_fen = generate_new_board(endgame_fen, move)
-                board, player = fen_to_board(endgame_fen)
+                board, player = generate_new_board(board, player, move)
+                #board, player = fen_to_board(endgame_fen)
         
         window.fill((0, 0, 0))
         draw_board(BOARD, window)

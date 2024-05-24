@@ -4,14 +4,16 @@ from board import fen_to_board, board_to_fen
 import time
 
 
-def random_move(board, player):
+def random_move(fen):
+    board, player = fen_to_board(fen)
     moves = legal_moves(board, player)
     if not moves:
         return None
     return random.choice(moves)
 
-def game_over(board):
+def game_over(board, player):
     # Check if a red piece is on the last row
+    #board, player = fen_to_board(fen)
     for col in range(8):
         piece = board[7, col]
         if piece in ['r', 'rr', 'rb']:
@@ -121,7 +123,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         raise TimeoutError("Time limit exceeded")
 
     moves = legal_moves(board, player)
-    if not moves or depth == 0 or game_over(board):
+    if not moves or depth == 0 or game_over(board, player):
         return evaluate(board, player), None
 
     if maximizing_player:
@@ -176,6 +178,8 @@ def select_move(fen):
     maximizing_player = player == 'b'
     return iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_player)
 
+if __name__ == "__main__":
+    print("fref")
 
 """
 def random_move(fen):

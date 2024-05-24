@@ -55,28 +55,29 @@ def parse_move(move_str):
         return None
 
 def human_move(fen):
-    legal_moves_list = legal_moves(fen)
+    board, player = fen_to_board(fen)
+    legal_moves_list = legal_moves(board, player)
     print_legal_moves(legal_moves_list)
 
     while True:
         user_input = input("Enter your move (e.g., (1,2)->(1,3)): ")
         move = parse_move(user_input)
         if move in legal_moves_list:
-            return generate_new_board(fen, move)
+            board, player = fen_to_board(fen)
+            return generate_new_board(board, player, move)
         else:
             print("Invalid move. Please try again.")
 
 def simulate_game(fen_start, window, pieces, clock, fps=40):
-    current_fen = fen_start
+    board, player = fen_to_board(fen_start)
     running = True
 
-    while running and not game_over(current_fen):
+    while running and not game_over(board, player):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
 
         # Draw the current board state
-        board, player = fen_to_board(current_fen)
         window.fill((0, 0, 0))
         draw_board(board, window)
         draw_pieces(board, window, pieces)
@@ -87,24 +88,23 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
 
         # Make a move
         if player == 'b':
-            best_move = select_move(current_fen)  # Blau verwendet Alpha-Beta-Suche
+            best_move = select_move(board_to_fen(board, player))  # Blau verwendet Alpha-Beta-Suche
             if best_move is None:
                 break
-            current_fen = generate_new_board(current_fen, best_move)
+            board, player = generate_new_board(board, player, best_move)
         else:
-            current_fen = human_move(current_fen)
+            board, player = human_move(board_to_fen(board, player))
 
-    # Check the final state of the game and print the winner
-    if game_over(current_fen):
-        board, player = fen_to_board(current_fen)
-        for col in range(8):
-            if board[7, col] in ['r', 'rr', 'rb']:
-                print("Red has won!")
-                break
-            elif board[0, col] in ['b', 'bb', 'br']:
-                print("Blue has won!")
-                break
-    return current_fen
+    
+    for col in range(8):
+        if board[7, col] in ['r', 'rr', 'rb']:
+            print("Red has won!")
+            break
+        elif board[0, col] in ['b', 'bb', 'br']:
+            print("Blue has won!")
+            break
+
+    return board_to_fen(board, player)
 
 if __name__ == "__main__":
     pg.init()
