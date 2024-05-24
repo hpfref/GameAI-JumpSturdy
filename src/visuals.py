@@ -65,7 +65,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
         if player == 'b':
             best_move = select_move(board_to_fen(board, player)) 
         else:
-            best_move = random_move(board_to_fen(board, player)) 
+            best_move = select_move(board_to_fen(board, player)) 
 
         if best_move is None:
             break
