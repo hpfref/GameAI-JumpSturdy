@@ -187,7 +187,10 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
 
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
-        return evaluate(board), None, True  # Return True to indicate that the search was completed
+        if maximizing_player:
+            return evaluate(board), None, True
+        else: return evaluate(board), None, True
+        #return evaluate(board), None, True  # Return True to indicate that the search was completed
 
     if maximizing_player:
         max_eval = float('-inf')
@@ -231,17 +234,18 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_pl
         value, move, completed = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
         if not completed:
             break  # Break out of the loop if the search was not completed
-        if (maximizing_player and value > best_value) or (not maximizing_player and value < best_value):
-            best_value = value
-            best_move = move
-            searched_depth = depth
+        #if (maximizing_player and value > best_value) or (not maximizing_player and value < best_value):
+        best_value = value
+        best_move = move
+        #    searched_depth = depth
+        #print(depth)
         depth += 1
 
     print(best_value)
-    return best_move, searched_depth
+    return best_move, depth-1
 
 def select_move(fen):
-    max_time = 3  # Maximum time in seconds for each move
+    max_time = 4  # Maximum time in seconds for each move
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth = iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_player)
