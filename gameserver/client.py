@@ -1,7 +1,8 @@
 ### To import from src:
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
+#sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src')))
 ###
 import pygame
 import json
