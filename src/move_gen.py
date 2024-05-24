@@ -2,10 +2,7 @@ from board import board_to_fen, fen_to_board
 import numpy as np
 
 
-# probably need to change for zugsortierung -> züge als schlagzug markieren und direkt vorne einsortiern usw...
-# -> maybe suche nach zügen für ein ein piece in eigene funktion ausgliedern
-# und adden von zügen in moves liste in eigene funktionen ausgleiedern für sortierung
-def legal_moves(fen) -> list: 
+def legal_moves(board, player) -> list: 
     """Return all legal moves for the current player
 
     Args:
@@ -14,7 +11,6 @@ def legal_moves(fen) -> list:
     Returns:
         moves: list of legal moves e.g. [((6, 1), (6, 0)), ...]
     """
-    board, player  = fen_to_board(fen)
     moves = [] # representation hier überlegen, maybe marker mit einbauen ob schlag move, winning move, ... 
 
     ### BLUE CASE START ###
