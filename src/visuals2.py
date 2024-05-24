@@ -63,7 +63,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
         clock.tick(fps)
 
         # Make a move
-        if player == 'b':
+        if player == 'r':
             best_move = select_move(current_fen)  # Blau verwendet Alpha-Beta-Suche
         else:
             best_move = random_move(current_fen)  # Rot macht zufälligen Zug
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen_blue_in_four, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()

@@ -171,6 +171,7 @@ def evaluate(fen):
         piece = board[0, col]
         if piece in ['b', 'bb', 'rb']:
             return float('inf')  # Blue wins
+    print(value)
     return value
 
 
@@ -211,17 +212,17 @@ def alpha_beta_search(fen, depth, alpha, beta, maximizing_player, start_time, ma
                 break
         return min_eval, best_move
 
-def iterative_deepening_alpha_beta_search(fen, max_time):
+def iterative_deepening_alpha_beta_search(fen, max_time, maximizing_player):
     start_time = time.time()
     depth = 1
     best_move = None
-    best_value = float('-inf')
+    best_value = float('-inf') if maximizing_player else float('inf')
 
     while True:
         print(f"Searching depth {depth}")
         try:
-            value, move = alpha_beta_search(fen, depth, float('-inf'), float('inf'), True, start_time, max_time)
-            if value > best_value:
+            value, move = alpha_beta_search(fen, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
+            if (maximizing_player and value > best_value) or (not maximizing_player and value < best_value):
                 best_value = value
                 best_move = move
             depth += 1
@@ -231,5 +232,7 @@ def iterative_deepening_alpha_beta_search(fen, max_time):
     return best_move
 
 def select_move(fen):
-    max_time = 6  # Maximum time in seconds for each move
-    return iterative_deepening_alpha_beta_search(fen, max_time)
+    max_time = 3  # Maximum time in seconds for each move
+    _, player = fen_to_board(fen)
+    maximizing_player = player == 'b'
+    return iterative_deepening_alpha_beta_search(fen, max_time, maximizing_player)
