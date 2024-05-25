@@ -204,9 +204,9 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
                 max_eval = eval
                 best_move = move
             alpha = max(alpha, eval)
-            if beta <= alpha or max_eval == float('inf'):  # Add check for winning move
+            if beta <= alpha:  # Add check for winning move
                 break
-            print(f"Time elapsed for move {move}: {time.time() - start_time}")
+            #print(f"Time elapsed for move {move}: {time.time() - start_time}")
         if best_move == None:
             best_move = moves[0]
         return max_eval, best_move, True  # Return True to indicate that the search was completed
@@ -222,9 +222,8 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
                 min_eval = eval
                 best_move = move
             beta = min(beta, eval)
-            if beta <= alpha or min_eval == float('-inf'):  # Add check for winning move
+            if beta <= alpha:  # Add check for winning move
                 break
-            print(f"Time elapsed for move {move}: {time.time() - start_time}")
         if best_move == None:
             best_move = moves[0]
         return min_eval, best_move, True  # Return True to indicate that the search was completed
@@ -243,7 +242,9 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, maximizing_pl
         best_value = value
         best_move = move
         depth += 1
-
+        
+        if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
+            break
 
     print(best_value)
     return best_move, depth-1
