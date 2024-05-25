@@ -65,7 +65,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
         if player == 'b':
             best_move = select_move(board_to_fen(board, player)) 
         else:
-            best_move = random_move(board_to_fen(board, player)) 
+            best_move = select_move(board_to_fen(board, player)) 
 
         if best_move is None:
             break
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     fen2 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen3 = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
     fen_wiki = "1bb4/1b0b05/b01b0bb4/1b01b01b02/3r01rr2/b0r0r02rr2/4r01rr1/4r0r0 b"
-    fen_blue_in_four = " 6/3b0b03/3r02bb1/b0b03bb2/rrrr1bb2rr1/2b01b01r01/2r01r02r0/4r01 b"
+    fen_blue_in_four = "1bbb01b0b0/4b03/4r01b01/2b01r0b02/5r02/1r06/3r02r01/1rrr01r01 r"
 
     fen_o_early = "b0b02b0b0/1b01bb0b0b01/2b05/3b04/2r05/3r0r03/1r0r02r0r01/r0r01r0r0r0 r"
     fen_o_late = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen_blue_in_four, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()
