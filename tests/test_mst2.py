@@ -42,12 +42,13 @@ def test_evaluate(fen, reps, evaluate):
 
 if __name__ == "__main__":
     # FENs to test
+    fen_start = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
     fen_early = "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b"
     fen_mid = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen_late = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
 
     # alpha beta / minmax
-    test_search_algorithms(fen_late) #depends on max depth set in alphabeta / minmax func
+    test_search_algorithms(fen_start) #depends on max depth set in alphabeta / minmax func
 
 
     #reps = 1000
