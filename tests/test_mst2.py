@@ -47,10 +47,10 @@ if __name__ == "__main__":
     fen_late = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
 
     # alpha beta / minmax
-    #test_search_algorithms(fen)
+    test_search_algorithms(fen_late) #depends on max depth set in alphabeta / minmax func
 
 
-    reps = 1000
-    print("Average time early game (in ms):", test_evaluate(fen_early,reps,evaluate)*1000)
-    print("Average time mid game (in ms):", test_evaluate(fen_mid,reps,evaluate)*1000)
-    print("Average time late game (in ms):", test_evaluate(fen_late,reps,evaluate)*1000)
+    #reps = 1000
+    #print("Average time early game (in ms):", test_evaluate(fen_early,reps,evaluate)*1000)
+    #print("Average time mid game (in ms):", test_evaluate(fen_mid,reps,evaluate)*1000)
+    #print("Average time late game (in ms):", test_evaluate(fen_late,reps,evaluate)*1000)

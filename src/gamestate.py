@@ -301,6 +301,8 @@ def min_max_search(board, player, depth, maximizing_player, start_time, max_time
                 if eval > max_eval:
                     max_eval = eval
                     best_move = move
+            if best_move == None:
+                best_move = moves[0]
             return max_eval, best_move, True  # Return True to indicate that the search was completed
         else:
             min_eval = float('inf')
@@ -313,8 +315,10 @@ def min_max_search(board, player, depth, maximizing_player, start_time, max_time
                 if eval < min_eval:
                     min_eval = eval
                     best_move = move
+            if best_move == None:
+                best_move = moves[0]
             return min_eval, best_move, True  # Return True to indicate that the search was completed
-
+    
     value, best_move, completed = min_max_recursive(board, player, depth, maximizing_player)
     return value, best_move, completed, nodes_explored
 
