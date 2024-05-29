@@ -261,7 +261,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
 
 def select_move(fen):
     max_time = 100  # Maximum time in seconds for each move
-    max_depth = 2  # for testing
+    max_depth = 3  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
@@ -350,7 +350,7 @@ def iterative_deepening_min_max_search(board, player, max_time, max_depth, maxim
 
 def select_min_max_move(fen):
     max_time = 100  # Maximum time in seconds for each move
-    max_depth = 2  # for testing
+    max_depth = 3  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player)

@@ -57,6 +57,7 @@ def threaded_client(conn, p, gameId):
                         fileLog.write(data)
                         fileLog.write("\n")
                         if not game.getValid():
+                            print("NOT VALID") # debug
                             if game.getCurrentPlayer() == "r":
                                 game.reset()
                                 print("Game finished, win: b")

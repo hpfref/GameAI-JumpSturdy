@@ -17,16 +17,24 @@ def test_function_runtime(func, *args, **kwargs):
     runtime = end_time - start_time
     return result, runtime
 
-def test_search_algorithms(fen):
+def test_search_algorithms(fen, select_move, select_min_max_move):
     # Test Alpha-Beta Search
     print("Testing Alpha-Beta Search")
     best_move_ab, runtime_ab = test_function_runtime(select_move, fen)
-    print(f"Alpha-Beta Best Move: {best_move_ab}, Runtime: {runtime_ab:.4f} seconds")
+    #
+    time_total_ab = timeit.repeat("select_move(fen)", globals=locals(), number=1, repeat=10)
+    time_avg_ab = sum(time_total_ab) / 10
+    print(f"Alpha-Beta Best Move: {best_move_ab}, Average Alpha-Beta Runtime: {time_avg_ab} seconds")
+    #print(f"Alpha-Beta Best Move: {best_move_ab}, Runtime: {runtime_ab:.4f} seconds")
 
     # Test Min-Max Search
     print("Testing Min-Max Search")
     best_move_mm, runtime_mm = test_function_runtime(select_min_max_move, fen)
-    print(f"Min-Max Best Move: {best_move_mm}, Runtime: {runtime_mm:.4f} seconds")
+    #
+    time_total_mm = timeit.repeat("select_min_max_move(fen)", globals=locals(), number=1, repeat=10)
+    time_avg_mm = sum(time_total_mm) / 10
+    print(f"Min-Max Best Move: {best_move_mm}, Average MinMax Runtime: {time_avg_mm} seconds")
+    #print(f"Min-Max Best Move: {best_move_mm}, Runtime: {runtime_mm:.4f} seconds")
 
     return best_move_ab, runtime_ab, best_move_mm, runtime_mm
 
@@ -48,7 +56,7 @@ if __name__ == "__main__":
     fen_late = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
 
     # alpha beta / minmax
-    test_search_algorithms(fen_start) #depends on max depth set in alphabeta / minmax func
+    test_search_algorithms(fen_late, select_move, select_min_max_move) #depends on max depth set in alphabeta / minmax func
 
 
     #reps = 1000

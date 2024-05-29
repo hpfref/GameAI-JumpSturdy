@@ -104,7 +104,7 @@ if __name__ == "__main__":
     fen2 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen3 = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
     fen_wiki = "1bb4/1b0b05/b01b0bb4/1b01b01b02/3r01rr2/b0r0r02rr2/4r01rr1/4r0r0 b"
-    fen_blue_in_four = "2b01bbb0/2b0r0b03/4b03/2bbb04/3r04/5r02/1r03r02/r0r0r0r0r0r0 r"
+    fen_red_in_three = "2b01bbb0/2b0r0b03/4b03/2bbb04/3r04/5r02/1r03r02/r0r0r0r0r0r0 r"
 
     fen_o_early = "b0b02b0b0/1b01bb0b0b01/2b05/3b04/2r05/3r0r03/1r0r02r0r01/r0r01r0r0r0 r"
     fen_o_late = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen_blue_in_four, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen_red_in_three, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()

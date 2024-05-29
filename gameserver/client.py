@@ -61,7 +61,7 @@ def main():
             elif player == 1 and game["player2"]:
                 print("New Board: " + game["board"])
                 ### HIER PLAYER 1
-                i = translate_single_move(select_move(game["board"]))
+                i = translate_single_move(random_move(game["board"]))
                 print(i) # to debug
                 ###
                 data = json.dumps(i)
