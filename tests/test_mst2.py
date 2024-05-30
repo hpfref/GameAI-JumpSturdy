@@ -56,7 +56,7 @@ if __name__ == "__main__":
     fen_late = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
 
     # alpha beta / minmax
-    test_search_algorithms(fen_late, select_move, select_min_max_move) #depends on max depth set in alphabeta / minmax func
+    test_search_algorithms(fen_mid, select_move, select_min_max_move) #depends on max depth set in alphabeta / minmax func
 
 
     #reps = 1000

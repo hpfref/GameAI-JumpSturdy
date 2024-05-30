@@ -180,6 +180,11 @@ def evaluate(board):
 
     return value
 
+### this might or might not work - testing sieht aktuell so aus als würde es funktionieren
+### halbiert ungefähr die zeit
+def estimate_move_value(board, player, move): #### Simpler geht nicht, sicher nicht ideal, aber fürs erste reichts
+    new_board, new_player = generate_new_board(board, player, move)
+    return evaluate(new_board)
 
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
@@ -195,6 +200,9 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         else: return evaluate(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
+
+    moves.sort(key=lambda move: estimate_move_value(board, player, move), reverse=maximizing_player)
+
 
     if maximizing_player:
         max_eval = float('-inf')
@@ -261,7 +269,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
 
 def select_move(fen):
     max_time = 100  # Maximum time in seconds for each move
-    max_depth = 3  # for testing
+    max_depth = 5  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
@@ -350,9 +358,10 @@ def iterative_deepening_min_max_search(board, player, max_time, max_depth, maxim
 
 def select_min_max_move(fen):
     max_time = 100  # Maximum time in seconds for each move
-    max_depth = 3  # for testing
+    max_depth = 5  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player)
     print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}")
     return best_move
+
