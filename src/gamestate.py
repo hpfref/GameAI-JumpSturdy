@@ -2,7 +2,7 @@ import random
 from move_gen import legal_moves
 from board import fen_to_board, board_to_fen
 import time
-
+import math
 
 def random_move(fen):
     board, player = fen_to_board(fen)
@@ -267,15 +267,34 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
     return best_move, depth-1, total_nodes_explored
 
+
+total_game_time = 60  # Total game time in seconds
+remaining_time = total_game_time 
+total_moves = 25  # Total number of moves in a game (for approximation, probably not accurate)
+current_move = 0  
+
 def select_move(fen):
-    max_time = 100  # Maximum time in seconds for each move
-    max_depth = 5  # for testing
+    global remaining_time, current_move 
+    max_depth = 100  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
-    best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
-    print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}")
-    return best_move
-
+    
+    while remaining_time > 0:
+        start_time = time.time()
+        position = current_move / total_moves
+        # Gaussfunktion 🤯
+        factor = math.exp(-((position - 0.6) ** 2) / (2 * 0.2 ** 2))
+        print(factor)
+        max_time = remaining_time * factor
+        print(max_time)
+        best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
+        end_time = time.time()
+        move_time = end_time - start_time  
+        remaining_time -= move_time  
+        print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}, Time spent: {move_time}, Remaining time: {remaining_time}")
+        
+        current_move += 1  
+        return best_move
 
 
 ############################################################## Einfacher MinMax (ohne Cutoffs)
