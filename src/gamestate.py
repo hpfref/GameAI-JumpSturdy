@@ -270,18 +270,16 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
 
 total_game_time = 300  # Total game time in seconds
 remaining_time = total_game_time 
-total_moves = 25  # Total number of moves in a game (for approximation, probably not accurate)
-current_move = 0  
 
 def select_move(fen):
-    global remaining_time, current_move 
+    global remaining_time, total_game_time
     max_depth = 100  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
     while remaining_time > 0:
         start_time = time.time()
-        position = current_move / total_moves
+        position = 1 - remaining_time / total_game_time  # Calculate the position in the game as a fraction of the total game time
         # Gaussfunktion 🤯
         factor = math.exp(-((position - 0.6) ** 2) / (2 * 0.2 ** 2))
         print(factor)
@@ -293,7 +291,6 @@ def select_move(fen):
         remaining_time = max(remaining_time - move_time - 0.01, 0)
         print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}, Time spent: {move_time}, Remaining time: {remaining_time}")
         
-        current_move += 1  
         return best_move
 
 
