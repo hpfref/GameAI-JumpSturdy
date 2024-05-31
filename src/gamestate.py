@@ -194,20 +194,29 @@ def evaluateTest(board):
         'br': {'value': -1.5, 'factor': -0.2},
         'rb': {'value': 1.5, 'factor': 0.2}
     }
+
+    # Pre-calculate row values
+    row_values = [1.5**i for i in range(8)]
+    inverse_row_values = [1.5**(7 - i) for i in range(8)]
+
+    # Get unique pieces and their indices
+    unique_pieces, inverse_indices = np.unique(board, return_inverse=True)
+
     value = 0
+    for piece in unique_pieces:
+        if piece in piece_values:
+            properties = piece_values[piece]
+            indices = np.where(inverse_indices == piece)
+            rows, cols = indices[0], indices[1]
 
-    for piece, properties in piece_values.items():
-        indices = np.where(board == piece)
-        rows, cols = indices[0], indices[1]
-
-        if piece in ['r', 'rr', 'br']:
-            if 7 in rows:
-                return float('-inf')  # Red wins
-            value += np.sum((1.5**rows * properties['factor']) + properties['value'])
-        else:
-            if 0 in rows:
-                return float('inf')  # Blue wins
-            value += np.sum((1.5**(7 - rows) * properties['factor']) + properties['value'])
+            if piece in ['r', 'rr', 'br']:
+                if 7 in rows:
+                    return float('-inf')  # Red wins
+                value += np.sum(row_values[row] * properties['factor'] + properties['value'] for row in rows)
+            else:
+                if 0 in rows:
+                    return float('inf')  # Blue wins
+                value += np.sum(inverse_row_values[row] * properties['factor'] + properties['value'] for row in rows)
 
     return value
 
@@ -215,15 +224,13 @@ def evaluateTest(board):
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
         return None, None, False, 0  # Return False to indicate that the search was not completed
-    
     nodes_explored = 0 # for testing
-
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
         if maximizing_player:
-            return evaluate(board), None, True, nodes_explored # to compare eval functions here
-        else: return evaluate(board), None, True, nodes_explored
+            return evaluateTest(board), None, True, nodes_explored # to compare eval functions here
+        else: return evaluateTest(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
 
@@ -263,6 +270,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
                 break
         if best_move == None:
             best_move = moves[0]
+
         return min_eval, best_move, True, nodes_explored  # Return True to indicate that the search was completed
 
 def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player):
@@ -291,23 +299,23 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     return best_move, depth-1, total_nodes_explored
 
 
-total_game_time = 60  # Total game time in seconds
+total_game_time = 6000000000  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 4  # for testing
+    max_depth = 6  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
-    while remaining_time > 0: # mby check if time left > time used **2 ?
+    while remaining_time > 0:
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  # Calculate the position in the game as a fraction of the total game time
         # Gaussfunktion 🤯
         factor = math.exp(-((position - 0.6) ** 2) / (2 * 0.2 ** 2))
-        print(factor)
+        #print(factor)
         max_time = max(remaining_time * factor, 0.01)
-        print(max_time)
+        #print(max_time)
         best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
         end_time = time.time()
         move_time = end_time - start_time  
