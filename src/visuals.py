@@ -65,7 +65,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
         if player == 'b':
             best_move = select_move(board_to_fen(board, player)) 
         else:
-            best_move = random_move(board_to_fen(board, player)) 
+            best_move = select_move(board_to_fen(board, player)) 
 
         if best_move is None:
             break
@@ -99,7 +99,7 @@ if __name__ == "__main__":
             else:
                 BOARD[y, x] = ""
 
-    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r'
+    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
     fen1 = '3b02/2bb2b02/5b0bb1/2r0b04/2rb3b01/1rr1rr2r0r0/5r02/2rr3 b'
     fen2 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen3 = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"

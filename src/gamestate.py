@@ -183,33 +183,92 @@ def evaluate(board):
     return value
 
 
-import numpy as np
-
 def evaluateTest(board):
-    piece_values = {
-        'r': {'value': -1, 'factor': -0.2},
-        'b': {'value': 1, 'factor': 0.2},
-        'rr': {'value': -2, 'factor': -0.3},
-        'bb': {'value': 2, 'factor': 0.3},
-        'br': {'value': -1.5, 'factor': -0.2},
-        'rb': {'value': 1.5, 'factor': 0.2}
-    }
+    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
+    bonus_positions = [(0, 2), (0, 5), (7, 2), (7, 5)]  # Positions for bonus
+    red_directions = [(1, -1), (1, 1)]  # Down-left and down-right for red
+    blue_directions = [(-1, -1), (-1, 1)]  # Up-left and up-right for blue
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in pieces:
 
-    # Get all indices at once
-    indices = {piece: np.where(board == piece) for piece in piece_values.keys()}
+                if piece in pieces:
+                    directions = red_directions if piece in ['r', 'rr', 'br'] else blue_directions
+                
+                    isolated = True
+                    for dr, dc in directions:
+                        r, c = row + dr, col + dc
+                        if 0 <= r < 8 and 0 <= c < 8 and board[r, c] in pieces:
+                            if (piece in ['r', 'rr', 'br'] and board[r, c] in ['r', 'rr', 'br']) or \
+                            (piece in ['b', 'bb', 'rb'] and board[r, c] in ['b', 'bb', 'rb']):
+                                isolated = False
+                                break
+                    if isolated:
+                        if piece in ['r', 'rr', 'br']:
+                            value += 0.2  # Penalty for red
+                        else:
+                            value -= 0.2  # Penalty for blue
 
-    for piece, properties in piece_values.items():
-        rows, cols = indices[piece]
+                    # Bonus for capturing moves that isolate pieces or damage the enemy structure
+                    for dr, dc in directions:
+                        r, c = row + dr, col + dc
+                        if 0 <= r < 8 and 0 <= c < 8 and board[r, c] not in pieces:
+                            if piece in ['r', 'rr', 'br']:
+                                value += 0.1  # Bonus for red
+                            else:
+                                value -= 0.1  # Bonus for blue
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    #helper_eval['Win'] = float('-inf')
+                    return float('-inf')  # Red wins
 
-        if piece in ['r', 'rr', 'br']:
-            if 7 in rows:
-                return float('-inf')  # Red wins
-            value += np.sum((1.5**rows * properties['factor']) + properties['value'])
-        else:
-            if 0 in rows:
-                return float('inf')  # Blue wins
-            value += np.sum((1.5**(7 - rows) * properties['factor']) + properties['value'])
+                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    #helper_eval['Win'] = float('inf')
+                    return float('inf')  # Blue wins
+
+                # Position ((1.5**row) * 0.2) + Materialwert + ?
+                if piece == 'r':
+                    #helper_eval['Position'] -= ((1.5**row) * 0.2)
+                    #helper_eval['Material'] -= 1
+                    value -= ((1.5**row) * 0.2) + 1
+
+                elif piece == 'b':
+                    #helper_eval['Position'] += ((1.5**(7 - row)) * 0.2)
+                    #helper_eval['Material'] += 1
+                    value += ((1.5**(7 - row)) * 0.2) + 1
+
+                elif piece == 'rr':
+                    #helper_eval['Position'] -= ((1.5**row) * 0.3)
+                    #helper_eval['Material'] -= 2
+                    value -= ((1.5**row) * 0.3) + 2
+
+                elif piece == 'bb':
+                    #helper_eval['Position'] += ((1.5**(7 - row)) * 0.3)
+                    #helper_eval['Material'] += 2
+                    value += ((1.5**(7 - row)) * 0.3) + 2
+
+                elif piece == 'br': 
+                    #helper_eval['Position'] -= ((1.5**row) * 0.2)
+                    value -= ((1.5**row) * 0.2) + 0 #mby troll aktuell gibts hier nur punkte für rot und materialwert von b und r gleichen sich aus -> durch faktor steuern 
+
+                elif piece == 'rb':
+                    #helper_eval['Position'] += ((1.5**row) * 0.2) # same
+                    value += ((1.5**(7 - row)) * 0.2) + 0
+                
+                if (row, col) in bonus_positions:
+                    if piece in ['r', 'rr', 'br']:
+                        value -= 1.5  # Bonus for red
+                    else:
+                        value += 1.5  # Bonus for blue
+    
+    # Mobilität berücksichtigen
+    #helper_eval['Mobility'] = 0.1 * len(blue_moves) - 0.1 * len(red_moves)
+    #value -= 0.1 * len(red_moves)
+    #value += 0.1 * len(blue_moves)
+
+    #print(helper_eval)
 
     return value
 
@@ -222,7 +281,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
         if maximizing_player:
-            return evaluateTest(board), None, True, nodes_explored # to compare eval functions here
+            return evaluate(board), None, True, nodes_explored # to compare eval functions here
         else: return evaluateTest(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
@@ -292,7 +351,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     return best_move, depth-1, total_nodes_explored
 
 
-total_game_time = 6000000000  # Total game time in seconds
+total_game_time = 6000000000000  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
