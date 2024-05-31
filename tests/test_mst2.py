@@ -41,7 +41,7 @@ def test_search_algorithms(fen, select_move, select_min_max_move):
     return best_move_ab, runtime_ab, best_move_mm, runtime_mm
 
 def test_alphabeta(fen, select_move):
-    # Test Alpha-Beta Search
+    # Test Alpha-Beta Search6
     print("Testing Alpha-Beta Search")
     best_move_ab, runtime_ab = test_function_runtime(select_move, fen)
     #
