@@ -277,7 +277,7 @@ def select_move(fen):
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
-    while remaining_time > 0:
+    while remaining_time > 0: # mby check if time left > time used **2 ?
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  # Calculate the position in the game as a fraction of the total game time
         # Gaussfunktion 🤯

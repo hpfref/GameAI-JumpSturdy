@@ -2,9 +2,216 @@ import numpy as np
 from collections import deque
 
 ### TEST ZUGSORTIERUNG
-
-
 def legal_moves(board, player) -> list: 
+    """Return all legal moves for the current player
+
+    Args:
+        fen: board & player
+
+    Returns:
+        moves: list of legal moves e.g. [((6, 1), (6, 0)), ...]
+    """
+    single_capture = deque([])
+    stack_capture = deque([])
+    stack_nocapture = deque([])
+    single_forwards = deque([])
+    single_sideways = deque([])
+
+    ### BLUE CASE START ###
+
+    if player == "b": # viel doppelter code durch case blue/red
+        # Get indices of blue pieces
+        indices_b = np.where((board == "b") | (board == "bb") | (board == "rb")) # consider rb as blue piece for this move
+
+        # Set legal target moves
+        b_moves_straight = ["", "b"]
+        b_moves_diagonal = ["r", "rr", "br"]
+        #bb_moves = ["", "b", "r", "br", "rr"]
+        bb_capture = ["r", "br", "rr"]
+        bb_nocapture = ["", "b"]
+        #target = None # to temporarily store target moves
+
+        #Loop through blue pieces
+        for index in zip(indices_b[0], indices_b[1]):
+            piece = board[index]
+            #print("Blue piece at index:", index, "is", piece)
+
+            # Check simple blue piece b
+            if piece == "b":
+
+                # Check left
+                target = index[0], index[1]-1
+                if index[1] > 0 and board[target] in b_moves_straight:
+                    single_sideways.append((index, (target)))  # Append the valid move to the left
+
+                # Check right
+                target = index[0], index[1]+1
+                if index[1] < 7 and board[target] in b_moves_straight:
+                    single_sideways.append((index, (target)))  # Append the valid move to the right
+
+                # Check top
+                if index[0] > 0:
+                    # Check top left
+                    target = index[0]-1, index[1]-1
+                    if index[1] > 0 and board[target] in b_moves_diagonal:
+                        single_capture.append((index, (target)))  # Append the valid move to the top left
+
+                    # Check top right
+                    target = index[0]-1, index[1]+1
+                    if index[1] < 7 and board[target] in b_moves_diagonal:
+                        single_capture.append((index, (target)))  # Append the valid move to the top right
+
+                    # Check top
+                    target = index[0]-1, index[1]
+                    if board[target] in b_moves_straight:
+                        single_forwards.append((index, (target)))  # Append the valid move to the top
+
+            # Check blue stack bb or rb
+            else:
+
+                # Check top
+                if index[0] > 0:
+                    
+                    # Check top left left
+                    if index[1] > 1:
+                        target = index[0]-1, index[1]-2
+                        if board[target] in bb_capture:
+                            stack_capture.append((index, (target)))  # Append the valid move to top left left
+                        elif board[target] in bb_nocapture:
+                            stack_nocapture.append((index, (target)))  # Append the valid move to top left left
+
+                    
+                    # Check top right right
+                    if index[1] < 6:
+                        target = index[0]-1, index[1]+2
+                        if board[target] in bb_capture:
+                            stack_capture.append((index, (target)))  # Append the valid move to top right right
+                        elif board[target] in bb_nocapture:
+                            stack_nocapture.append((index, (target)))  # Append the valid move to top right right
+
+                # Check top top
+                if index[0] > 1:
+
+                    # Check top top left
+                    if index[1] > 0:
+                        target = index[0]-2, index[1]-1
+                        if board[target] in bb_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to top top left
+                        elif board[target] in bb_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to top top left
+
+                    # Check top top right
+                    if index[1] < 7:
+                        target = index[0]-2, index[1]+1
+                        if board[target] in bb_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to top top right
+                        elif board[target] in bb_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to top top right
+            
+
+    ### BLUE CASE END ###
+    ### RED CASE START ###
+            
+    else:
+        # Get indices of red pieces
+        indices_r = np.where((board == "r") | (board == "rr") | (board == "br")) # consider br as red piece for this move
+
+        # Set legal target moves
+        r_moves_straight = ["", "r"]
+        r_moves_diagonal = ["b", "bb", "rb"]
+        #rr_moves = ["", "b", "r", "rb", "bb"]
+        rr_capture = ["b", "rb", "bb"]
+        rr_nocapture = ["","r"]
+
+        # Loop through red pieces indices
+        for index in zip(indices_r[0], indices_r[1]):
+            piece = board[index]
+            #print("Red piece at index:", index)    
+
+            # Check simple red piece r
+            if piece == "r":
+
+                # Check left
+                target = index[0], index[1]-1
+                if index[1] > 0 and board[target] in r_moves_straight:
+                    single_sideways.append((index, (target)))  # Append the valid move to the left
+
+                # Check right
+                target = index[0], index[1]+1
+                if index[1] < 7 and board[target] in r_moves_straight:
+                    single_sideways.append((index, (target)))  # Append the valid move to the right
+
+                # Check bottom
+                if index[0] < 7:
+
+                    # Check bottom left
+                    target = index[0]+1, index[1]-1
+                    if index[1] > 0 and board[target] in r_moves_diagonal:
+                        single_capture.append((index, (target)))  # Append the valid move to the bottom left
+
+                    # Check bottom right
+                    target = index[0]+1, index[1]+1
+                    if index[1] < 7 and board[target] in r_moves_diagonal:
+                        single_capture.append((index, (target)))  # Append the valid move to the bottom right
+
+                    # Check bottom
+                    target = index[0]+1, index[1]
+                    if board[target] in r_moves_straight:
+                        single_forwards.append((index, (target)))  # Append the valid move to the bottom
+
+            # Check red stack br or rr
+            else:
+
+                # Check bottom 
+                if index[0] < 7:
+
+                    # Check bottom left left
+                    if index[1] > 1:
+                        target = index[0]+1, index[1]-2
+                        if board[target] in rr_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to the bottom left left
+                        elif board[target] in rr_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to the bottom left left
+
+                    # Check bottom bottom right
+                    if index[1] < 6:
+                        target = index[0]+1, index[1]+2
+                        if board[target] in rr_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to the bottom right right
+                        elif board[target] in rr_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to the bottom right right
+
+                # Check bottom bottom
+                if index[0] < 6:
+
+                    # Check bottom bottom left
+                    if index[1] > 0:
+                        target = index[0]+2, index[1]-1
+                        if board[target] in rr_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to the bottom bottom left
+                        elif board[target] in rr_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to the bottom bottom left
+
+                    # Check bottom bottom right
+                    if index[1] < 7:
+                        target = index[0]+2, index[1]+1
+                        if board[target] in rr_capture:
+                            stack_capture.append((index, (target))) # Append the valid move to the bottom bottom right
+                        elif board[target] in rr_nocapture:
+                            stack_nocapture.append((index, (target))) # Append the valid move to the bottom bottom right
+  
+  
+    ### RED CASE END ###
+    stack_capture.extend(single_capture)
+    stack_capture.extend(stack_nocapture)
+    stack_capture.extend(single_forwards)
+    stack_capture.extend(single_sideways)
+
+    return stack_capture # extend is in place operation, this contains all moves now
+### ENDE 
+
+
+def legal_moves123(board, player) -> list: 
     """Return all legal moves for the current player
 
     Args:
