@@ -194,29 +194,22 @@ def evaluateTest(board):
         'br': {'value': -1.5, 'factor': -0.2},
         'rb': {'value': 1.5, 'factor': 0.2}
     }
-
-    # Pre-calculate row values
-    row_values = [1.5**i for i in range(8)]
-    inverse_row_values = [1.5**(7 - i) for i in range(8)]
-
-    # Get unique pieces and their indices
-    unique_pieces, inverse_indices = np.unique(board, return_inverse=True)
-
     value = 0
-    for piece in unique_pieces:
-        if piece in piece_values:
-            properties = piece_values[piece]
-            indices = np.where(inverse_indices == piece)
-            rows, cols = indices[0], indices[1]
 
-            if piece in ['r', 'rr', 'br']:
-                if 7 in rows:
-                    return float('-inf')  # Red wins
-                value += np.sum(row_values[row] * properties['factor'] + properties['value'] for row in rows)
-            else:
-                if 0 in rows:
-                    return float('inf')  # Blue wins
-                value += np.sum(inverse_row_values[row] * properties['factor'] + properties['value'] for row in rows)
+    # Get all indices at once
+    indices = {piece: np.where(board == piece) for piece in piece_values.keys()}
+
+    for piece, properties in piece_values.items():
+        rows, cols = indices[piece]
+
+        if piece in ['r', 'rr', 'br']:
+            if 7 in rows:
+                return float('-inf')  # Red wins
+            value += np.sum((1.5**rows * properties['factor']) + properties['value'])
+        else:
+            if 0 in rows:
+                return float('inf')  # Blue wins
+            value += np.sum((1.5**(7 - rows) * properties['factor']) + properties['value'])
 
     return value
 
@@ -304,7 +297,7 @@ remaining_time = total_game_time
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 6  # for testing
+    max_depth = 4  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
