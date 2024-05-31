@@ -132,6 +132,15 @@ def evaluate(board):
             piece = board[row, col]
             if piece in pieces:
 
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    #helper_eval['Win'] = float('-inf')
+                    return float('-inf')  # Red wins
+
+                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    #helper_eval['Win'] = float('inf')
+                    return float('inf')  # Blue wins
+
                 # Position ((1.5**row) * 0.2) + Materialwert + ?
                 if piece == 'r':
                     #helper_eval['Position'] -= ((1.5**row) * 0.2)
@@ -162,14 +171,7 @@ def evaluate(board):
                     value += ((1.5**(7 - row)) * 0.2) + 0
 
                 # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
-                if row == 7 and piece in ['r', 'rr', 'br']:
-                    #helper_eval['Win'] = float('-inf')
-                    return float('-inf')  # Red wins
 
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
-                if row == 0 and piece in ['b', 'bb', 'rb']:
-                    #helper_eval['Win'] = float('inf')
-                    return float('inf')  # Blue wins
 
     # Mobilität berücksichtigen
     #helper_eval['Mobility'] = 0.1 * len(blue_moves) - 0.1 * len(red_moves)
@@ -180,11 +182,35 @@ def evaluate(board):
 
     return value
 
-### this might or might not work - testing sieht aktuell so aus als würde es funktionieren
-### halbiert ungefähr die zeit
-def estimate_move_value(board, player, move): #### Simpler geht nicht, sicher nicht ideal, aber fürs erste reichts
-    new_board, new_player = generate_new_board(board, player, move)
-    return evaluate(new_board)
+
+import numpy as np
+
+def evaluateTest(board):
+    piece_values = {
+        'r': {'value': -1, 'factor': -0.2},
+        'b': {'value': 1, 'factor': 0.2},
+        'rr': {'value': -2, 'factor': -0.3},
+        'bb': {'value': 2, 'factor': 0.3},
+        'br': {'value': -1.5, 'factor': -0.2},
+        'rb': {'value': 1.5, 'factor': 0.2}
+    }
+    value = 0
+
+    for piece, properties in piece_values.items():
+        indices = np.where(board == piece)
+        rows, cols = indices[0], indices[1]
+
+        if piece in ['r', 'rr', 'br']:
+            if 7 in rows:
+                return float('-inf')  # Red wins
+            value += np.sum((1.5**rows * properties['factor']) + properties['value'])
+        else:
+            if 0 in rows:
+                return float('inf')  # Blue wins
+            value += np.sum((1.5**(7 - rows) * properties['factor']) + properties['value'])
+
+    return value
+
 
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
@@ -200,9 +226,6 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         else: return evaluate(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
-
-    #moves.sort(key=lambda move: estimate_move_value(board, player, move), reverse=maximizing_player)
-
 
     if maximizing_player:
         max_eval = float('-inf')
@@ -268,7 +291,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     return best_move, depth-1, total_nodes_explored
 
 
-total_game_time = 3000  # Total game time in seconds
+total_game_time = 60  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
