@@ -122,8 +122,8 @@ def evaluate(board):
     #piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # dunno
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
-    red_moves = legal_moves(board, 'r')
-    blue_moves = legal_moves(board, 'b')
+    #red_moves = legal_moves(board, 'r')
+    #blue_moves = legal_moves(board, 'b')
 
     #helper_eval = {"Position": 0, "Material": 0, "Mobility": 0, "Win": 0} # to understand components
 
@@ -173,8 +173,8 @@ def evaluate(board):
 
     # Mobilität berücksichtigen
     #helper_eval['Mobility'] = 0.1 * len(blue_moves) - 0.1 * len(red_moves)
-    value -= 0.1 * len(red_moves)
-    value += 0.1 * len(blue_moves)
+    #value -= 0.1 * len(red_moves)
+    #value += 0.1 * len(blue_moves)
 
     #print(helper_eval)
 
