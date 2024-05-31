@@ -1,5 +1,7 @@
-from board import board_to_fen, fen_to_board
 import numpy as np
+from collections import deque
+
+### TEST ZUGSORTIERUNG
 
 
 def legal_moves(board, player) -> list: 
@@ -11,7 +13,11 @@ def legal_moves(board, player) -> list:
     Returns:
         moves: list of legal moves e.g. [((6, 1), (6, 0)), ...]
     """
-    moves = [] # representation hier überlegen, maybe marker mit einbauen ob schlag move, winning move, ... 
+    single_capture = deque([])
+    stack_2forward = deque([])
+    stack_1forward = deque([])
+    single_forwards = deque([])
+    single_sideways = deque([])
 
     ### BLUE CASE START ###
 
@@ -34,25 +40,25 @@ def legal_moves(board, player) -> list:
 
                 # Check left
                 if index[1] > 0 and board[index[0], index[1]-1] in b_moves_straight:
-                    moves.append((index, (index[0], index[1]-1)))  # Append the valid move to the left
+                    single_sideways.append((index, (index[0], index[1]-1)))  # Append the valid move to the left
 
                 # Check right
                 if index[1] < 7 and board[index[0], index[1]+1] in b_moves_straight:
-                    moves.append((index, (index[0], index[1]+1)))  # Append the valid move to the right
+                    single_sideways.append((index, (index[0], index[1]+1)))  # Append the valid move to the right
 
                 # Check top
                 if index[0] > 0:
                     # Check top left
                     if index[1] > 0 and board[index[0]-1, index[1]-1] in b_moves_diagonal:
-                        moves.append((index, (index[0]-1, index[1]-1)))  # Append the valid move to the top left
+                        single_capture.append((index, (index[0]-1, index[1]-1)))  # Append the valid move to the top left
 
                     # Check top right
                     if index[1] < 7 and board[index[0]-1, index[1]+1] in b_moves_diagonal:
-                        moves.append((index, (index[0]-1, index[1]+1)))  # Append the valid move to the top right
+                        single_capture.append((index, (index[0]-1, index[1]+1)))  # Append the valid move to the top right
 
                     # Check top
                     if board[index[0]-1, index[1]] in b_moves_straight:
-                        moves.append((index, (index[0]-1, index[1])))  # Append the valid move to the top
+                        single_forwards.append((index, (index[0]-1, index[1])))  # Append the valid move to the top
 
             # Check blue stack bb or rb
             else:
@@ -62,23 +68,23 @@ def legal_moves(board, player) -> list:
                     
                     # Check top left left
                     if index[1] > 1 and board[index[0]-1, index[1]-2] in bb_moves:
-                        moves.append((index, (index[0]-1, index[1]-2)))  # Append the valid move to top left left
+                        stack_1forward.append((index, (index[0]-1, index[1]-2)))  # Append the valid move to top left left
 
                     
                     # Check top right right
                     if index[1] < 6 and board[index[0]-1, index[1]+2] in bb_moves:
-                        moves.append((index, (index[0]-1, index[1]+2)))  # Append the valid move to top right right
+                        stack_1forward.append((index, (index[0]-1, index[1]+2)))  # Append the valid move to top right right
 
                 # Check top top
                 if index[0] > 1:
 
                     # Check top top left
                     if index[1] > 0 and board[index[0]-2, index[1]-1] in bb_moves:
-                        moves.append((index, (index[0]-2, index[1]-1)))  # Append the valid move to top top left
+                        stack_2forward.append((index, (index[0]-2, index[1]-1)))  # Append the valid move to top top left
 
                     # Check top top right
                     if index[1] < 7 and board[index[0]-2, index[1]+1] in bb_moves:
-                        moves.append((index, (index[0]-2, index[1]+1)))  # Append the valid move to top top right
+                        stack_2forward.append((index, (index[0]-2, index[1]+1)))  # Append the valid move to top top right
 
     ### BLUE CASE END ###
     ### RED CASE START ###
@@ -102,26 +108,26 @@ def legal_moves(board, player) -> list:
 
                 # Check left
                 if index[1] > 0 and board[index[0], index[1]-1] in r_moves_straight:
-                    moves.append((index, (index[0], index[1]-1)))  # Append the valid move to the left
+                    single_sideways.append((index, (index[0], index[1]-1)))  # Append the valid move to the left
 
                 # Check right
                 if index[1] < 7 and board[index[0], index[1]+1] in r_moves_straight:
-                    moves.append((index, (index[0], index[1]+1)))  # Append the valid move to the right
+                    single_sideways.append((index, (index[0], index[1]+1)))  # Append the valid move to the right
 
                 # Check bottom
                 if index[0] < 7:
 
                     # Check bottom left
                     if index[1] > 0 and board[index[0]+1, index[1]-1] in r_moves_diagonal:
-                        moves.append((index, (index[0]+1, index[1]-1)))  # Append the valid move to the bottom left
+                        single_capture.append((index, (index[0]+1, index[1]-1)))  # Append the valid move to the bottom left
 
                     # Check bottom right
                     if index[1] < 7 and board[index[0]+1, index[1]+1] in r_moves_diagonal:
-                        moves.append((index, (index[0]+1, index[1]+1)))  # Append the valid move to the bottom right
+                        single_capture.append((index, (index[0]+1, index[1]+1)))  # Append the valid move to the bottom right
 
                     # Check bottom
                     if board[index[0]+1, index[1]] in r_moves_straight:
-                        moves.append((index, (index[0]+1, index[1])))  # Append the valid move to the bottom
+                        single_forwards.append((index, (index[0]+1, index[1])))  # Append the valid move to the bottom
 
             # Check red stack br or rr
             else:
@@ -131,28 +137,32 @@ def legal_moves(board, player) -> list:
 
                     # Check bottom left left
                     if index[1] > 1 and board[index[0]+1, index[1]-2] in rr_moves:
-                        moves.append((index, (index[0]+1, index[1]-2)))  # Append the valid move to the bottom left left
+                        stack_1forward.append((index, (index[0]+1, index[1]-2)))  # Append the valid move to the bottom left left
 
                     # Check bottom bottom right
                     if index[1] < 6 and board[index[0]+1, index[1]+2] in rr_moves:
-                        moves.append((index, (index[0]+1, index[1]+2)))  # Append the valid move to the bottom right right
+                        stack_1forward.append((index, (index[0]+1, index[1]+2)))  # Append the valid move to the bottom right right
 
                 # Check bottom bottom
                 if index[0] < 6:
 
                     # Check bottom bottom left
                     if index[1] > 0 and board[index[0]+2, index[1]-1] in rr_moves:
-                        moves.append((index, (index[0]+2, index[1]-1)))  # Append the valid move to the bottom bottom left
+                        stack_2forward.append((index, (index[0]+2, index[1]-1)))  # Append the valid move to the bottom bottom left
 
                     # Check bottom bottom right
                     if index[1] < 7 and board[index[0]+2, index[1]+1] in rr_moves:
-                        moves.append((index, (index[0]+2, index[1]+1)))  # Append the valid move to the bottom bottom right
+                        stack_2forward.append((index, (index[0]+2, index[1]+1)))  # Append the valid move to the bottom bottom right
   
     ### RED CASE END ###
+    single_capture.extend(stack_2forward)
+    single_capture.extend(stack_1forward)
+    single_capture.extend(single_forwards)
+    single_capture.extend(single_sideways)
 
-    return moves
+    return single_capture # extend is in place operation, this contains all moves now
+### ENDE 
 
-###
 
 def translate_single_move(move): # for gameserver
     """Translate indexes of move into the official field names

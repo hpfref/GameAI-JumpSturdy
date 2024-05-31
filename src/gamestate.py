@@ -201,7 +201,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         
     nodes_explored += 1 # for testing 
 
-    moves.sort(key=lambda move: estimate_move_value(board, player, move), reverse=maximizing_player)
+    #moves.sort(key=lambda move: estimate_move_value(board, player, move), reverse=maximizing_player)
 
 
     if maximizing_player:
