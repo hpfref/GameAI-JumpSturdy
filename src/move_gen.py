@@ -1,7 +1,7 @@
 import numpy as np
 from collections import deque
 
-### TEST ZUGSORTIERUNG
+
 def legal_moves(board, player) -> list: 
     """Return all legal moves for the current player
 
@@ -208,7 +208,7 @@ def legal_moves(board, player) -> list:
     stack_capture.extend(single_sideways)
 
     return stack_capture # extend is in place operation, this contains all moves now
-### ENDE 
+
 
 
 def translate_single_move(move): # for gameserver

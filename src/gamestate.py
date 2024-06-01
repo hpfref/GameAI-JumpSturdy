@@ -27,97 +27,6 @@ def game_over(board, player):
 
     return False
 
-# instead of copying could make move & unmake move for alpha beta always using same board
-def generate_new_board(board, player, move):
-    from_pos, to_pos = move
-    new_board = board.copy()
-
-    if player == "b":
-        # Move logic for blue pieces
-        if new_board[to_pos] in ["", "r"]:
-            new_board[to_pos] = "b"
-        elif new_board[to_pos] == "rr":
-            new_board[to_pos] = "rb"
-        elif new_board[to_pos] in ["b", "br"]:
-            new_board[to_pos] = "bb"
-
-        # Clear the original position
-        if new_board[from_pos] == "b":
-            new_board[from_pos] = ""
-        elif new_board[from_pos] == "bb":
-            new_board[from_pos] = "b"
-        elif new_board[from_pos] == "rb":
-            new_board[from_pos] = "r"
-
-    else:
-        # Move logic for red pieces
-        if new_board[to_pos] in ["", "b"]:
-            new_board[to_pos] = "r"
-        elif new_board[to_pos] == "bb":    
-            new_board[to_pos] = "br"
-        elif new_board[to_pos] in ["r", "rb"]:
-            new_board[to_pos] = "rr"
-
-        # Clear the original position
-        if new_board[from_pos] == "r":
-            new_board[from_pos] = ""
-        elif new_board[from_pos] == "rr":
-            new_board[from_pos] = "r"
-        elif new_board[from_pos] == "br":
-            new_board[from_pos] = "b"
-
-    # Switch the player
-    new_player = 'b' if player == 'r' else 'r'
-    return new_board, new_player
-
-def old_evaluate(board): # i guess slow, inefficient -> KEEP FOR TEST dann können wir sagen wir sind schneller geworden oder so
-    piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5}
-    value = 0
-
-    # Materialwert berechnen
-    for row in range(8):
-        for col in range(8):
-            piece = board[row, col]
-            if piece in piece_values:
-                value += piece_values[piece]
-
-    # Positionelle Faktoren berücksichtigen
-    for row in range(8):
-        for col in range(8):
-            piece = board[row, col]
-            if piece == 'r':
-                value -= (1.5**row) * 0.2
-            elif piece == 'b':
-                value += (1.5**(7 - row)) * 0.2
-            elif piece == 'rr':
-                value -= (1.5**row) * 0.3
-            elif piece == 'bb':
-                value += (1.5**(7 - row)) * 0.3
-            elif piece == 'br':
-                value -= (1.5**row) * 0.2
-            elif piece == 'rb':
-                value += (1.5**(7 - row)) * 0.2
-
-    # Mobilität berücksichtigen
-    red_moves = legal_moves(board, 'r')
-    blue_moves = legal_moves(board, 'b')
-    value -= 0.01 * len(red_moves)
-    value += 0.01 * len(blue_moves)
-
-    # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
-    for col in range(8):
-        piece = board[7, col]
-        if piece in ['r', 'rr', 'br']:
-            return float('-inf')  # Red wins
-
-    # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
-    for col in range(8):
-        piece = board[0, col]
-        if piece in ['b', 'bb', 'rb']:
-            return float('inf')  # Blue wins
-
-    return value
-
 def evaluate(board):
     #piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # dunno
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
@@ -273,6 +182,56 @@ def evaluateTest(board):
     return value
 
 
+
+def make_move(board, player, move, start_value, target_value):
+    from_pos, to_pos = move
+
+    if player == "b":
+        # Move logic for blue pieces
+        if target_value in ["", "r"]:
+            board[to_pos] = "b"
+        elif target_value == "rr":
+            board[to_pos] = "rb"
+        elif target_value in ["b", "br"]:
+            board[to_pos] = "bb"
+
+        # Clear the original position
+        if start_value == "b":
+            board[from_pos] = ""
+        elif start_value == "bb":
+            board[from_pos] = "b"
+        elif start_value == "rb":
+            board[from_pos] = "r"
+
+    else:
+        # Move logic for red pieces
+        if target_value in ["", "b"]:
+            board[to_pos] = "r"
+        elif target_value == "bb":    
+            board[to_pos] = "br"
+        elif target_value in ["r", "rb"]:
+            board[to_pos] = "rr"
+
+        # Clear the original position
+        if start_value == "r":
+            board[from_pos] = ""
+        elif start_value == "rr":
+            board[from_pos] = "r"
+        elif start_value == "br":
+            board[from_pos] = "b"
+
+    return 'b' if player == 'r' else 'r' # Switch the player
+
+def unmake_move(board, move, start_value, target_value):
+    from_pos, to_pos = move
+
+    board[from_pos] = start_value
+    board[to_pos] = target_value
+    
+    return
+
+
+
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
         return None, None, False, 0  # Return False to indicate that the search was not completed
@@ -282,7 +241,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         nodes_explored += 1
         if maximizing_player:
             return evaluate(board), None, True, nodes_explored # to compare eval functions here
-        else: return evaluateTest(board), None, True, nodes_explored
+        else: return evaluate(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
 
@@ -290,9 +249,12 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         max_eval = float('-inf')
         best_move = None
         for move in moves:
-            new_board, new_player = generate_new_board(board, player, move)
-            eval, _, completed, child_nodes_explored = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, False, start_time, max_time)
+            start_value = board[move[0]] # save start field value e.g. b
+            target_value = board[move[1]] # save target field value e.g. r
+            new_player = make_move(board, player, move, start_value, target_value)
+            eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time)
             nodes_explored += child_nodes_explored
+            unmake_move(board, move, start_value, target_value) # restore board 
             if not completed:
                 return None, None, False, nodes_explored  # Return False to indicate that the search was not completed
             if eval > max_eval:
@@ -309,9 +271,12 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         min_eval = float('inf')
         best_move = None
         for move in moves:
-            new_board, new_player = generate_new_board(board, player, move)
-            eval, _, completed, child_nodes_explored = alpha_beta_search(new_board, new_player, depth - 1, alpha, beta, True, start_time, max_time)
+            start_value = board[move[0]] # save start field value e.g. r
+            target_value = board[move[1]] # save target field value e.g. b
+            new_player = make_move(board, player, move, start_value, target_value)
+            eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time)
             nodes_explored += child_nodes_explored
+            unmake_move(board, move, start_value, target_value) # restore board 
             if not completed:
                 return None, None, False, nodes_explored  # Return False to indicate that the search was not completed
             if eval < min_eval:
@@ -377,7 +342,78 @@ def select_move(fen):
         return best_move
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ############################################################## Einfacher MinMax (ohne Cutoffs)
+
+
+
+# instead of copying could make move & unmake move for alpha beta always using same board
+def generate_new_board(board, player, move):
+    from_pos, to_pos = move
+    new_board = board.copy()
+
+    if player == "b":
+        # Move logic for blue pieces
+        if new_board[to_pos] in ["", "r"]:
+            new_board[to_pos] = "b"
+        elif new_board[to_pos] == "rr":
+            new_board[to_pos] = "rb"
+        elif new_board[to_pos] in ["b", "br"]:
+            new_board[to_pos] = "bb"
+
+        # Clear the original position
+        if new_board[from_pos] == "b":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "bb":
+            new_board[from_pos] = "b"
+        elif new_board[from_pos] == "rb":
+            new_board[from_pos] = "r"
+
+    else:
+        # Move logic for red pieces
+        if new_board[to_pos] in ["", "b"]:
+            new_board[to_pos] = "r"
+        elif new_board[to_pos] == "bb":    
+            new_board[to_pos] = "br"
+        elif new_board[to_pos] in ["r", "rb"]:
+            new_board[to_pos] = "rr"
+
+        # Clear the original position
+        if new_board[from_pos] == "r":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "rr":
+            new_board[from_pos] = "r"
+        elif new_board[from_pos] == "br":
+            new_board[from_pos] = "b"
+
+    # Switch the player
+    new_player = 'b' if player == 'r' else 'r'
+    return new_board, new_player
+
+
+
 def min_max_search(board, player, depth, maximizing_player, start_time, max_time):
     nodes_explored = 0
 
