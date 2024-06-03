@@ -296,32 +296,44 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0 # for testing
+    depth_times = []  # List to store the time it took to search each depth
 
     while True:
         if depth > max_depth:
             break
         print(f"Searching depth {depth}")
+        depth_start_time = time.time()  # Start time for this depth
         value, move, completed, nodes_explored = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
+        depth_end_time = time.time()  # End time for this depth
+        depth_times.append(depth_end_time - depth_start_time)  # Store the time it took to search this depth
         total_nodes_explored += nodes_explored
         if not completed:
             break  # Break out of the loop if the search was not completed
         best_value = value
         best_move = move
-        depth += 1
-        
+
+        # Estimate the time for the next depth level
+        if depth <= len(depth_times):
+            next_depth_time_estimate = depth_times[depth - 1] * 4  
+            print(f"Estimated time for next depth: {next_depth_time_estimate}")
+            print(f"Actual time for current depth: {depth_times[depth - 1]}")
+            if time.time() + next_depth_time_estimate > start_time + max_time:
+                print(f"Zeit reicht nicht mehr für nächste Tiefe aus")
+                break  
+
         if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
             break
 
+        depth += 1
+
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
     return best_move, depth-1, total_nodes_explored
-
-
-total_game_time = 6000000000000  # Total game time in seconds
+total_game_time = 120  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 4  # for testing
+    max_depth = 1000  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
