@@ -48,8 +48,9 @@ def draw_pieces(board, window, PIECES):
 
 
 
-def simulate_game(fen_start, window, pieces, clock, fps=40):
+def simulate_game(fen_start, window, pieces, clock, fps=40, game_time={'b': 300, 'r': 300}):
     board, player = fen_to_board(fen_start)
+    start_time = pg.time.get_ticks()
 
     while not game_over(board, player):
         # Draw the current board state
@@ -62,10 +63,19 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
         clock.tick(fps)
 
         # Make a move
+        move_start_time = pg.time.get_ticks()
         if player == 'b':
             best_move = select_move(board_to_fen(board, player)) 
         else:
             best_move = select_move(board_to_fen(board, player)) 
+        move_end_time = pg.time.get_ticks()
+
+        # Update the player's remaining game time
+        game_time[player] -= (move_end_time - move_start_time) / 1000  # Convert milliseconds to seconds
+
+        if game_time[player] <= 0:
+            print(f"{player} has run out of time!")
+            break
 
         if best_move is None:
             break
@@ -82,7 +92,6 @@ def simulate_game(fen_start, window, pieces, clock, fps=40):
             break
 
     return board_to_fen(board, player)
-    
 
 
 if __name__ == "__main__":

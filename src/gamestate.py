@@ -311,14 +311,13 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
             break  # Break out of the loop if the search was not completed
         best_value = value
         best_move = move
-
-        # Estimate the time for the next depth level
         if depth <= len(depth_times):
-            next_depth_time_estimate = depth_times[depth - 1] * 4  
-            print(f"Estimated time for next depth: {next_depth_time_estimate}")
-            print(f"Actual time for current depth: {depth_times[depth - 1]}")
+            if depth <= 4:
+                next_depth_time_estimate = depth_times[depth - 1] * 4
+            else:
+                next_depth_time_estimate = depth_times[depth - 1] ** 2
+                #print(next_depth_time_estimate)
             if time.time() + next_depth_time_estimate > start_time + max_time:
-                print(f"Zeit reicht nicht mehr für nächste Tiefe aus")
                 break  
 
         if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
@@ -333,7 +332,7 @@ remaining_time = total_game_time
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 1000  # for testing
+    max_depth = 10  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
@@ -504,8 +503,8 @@ def iterative_deepening_min_max_search(board, player, max_time, max_depth, maxim
     return best_move, depth - 1, total_nodes_explored
 
 def select_min_max_move(fen):
-    max_time = 10000  # Maximum time in seconds for each move
-    max_depth = 4  # for testing
+    max_time = 1000000  # Maximum time in seconds for each move
+    max_depth = 10000  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player)
