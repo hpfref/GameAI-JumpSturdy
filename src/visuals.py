@@ -48,10 +48,9 @@ def draw_pieces(board, window, PIECES):
 
 
 
-def simulate_game(fen_start, window, pieces, clock, fps=40, game_time={'b': 300, 'r': 300}):
+def simulate_game(fen_start, window, pieces, clock, fps=40,):
     board, player = fen_to_board(fen_start)
-    start_time = pg.time.get_ticks()
-
+    move_count = 0
     while not game_over(board, player):
         # Draw the current board state
         window.fill((0, 0, 0))
@@ -63,24 +62,14 @@ def simulate_game(fen_start, window, pieces, clock, fps=40, game_time={'b': 300,
         clock.tick(fps)
 
         # Make a move
-        move_start_time = pg.time.get_ticks()
         if player == 'b':
             best_move = select_move(board_to_fen(board, player)) 
+            move_count += 1
         else:
-            best_move = select_move(board_to_fen(board, player)) 
-        move_end_time = pg.time.get_ticks()
-
-        # Update the player's remaining game time
-        game_time[player] -= (move_end_time - move_start_time) / 1000  # Convert milliseconds to seconds
-
-        if game_time[player] <= 0:
-            print(f"{player} has run out of time!")
-            break
-
-        if best_move is None:
-            break
-        board, player = generate_new_board(board, player, best_move)
+            best_move = select_move(board_to_fen(board, player))
+            move_count += 1
         
+        board, player = generate_new_board(board, player, best_move)
 
     # Check the final state of the game and print the winner
     for col in range(8):
@@ -90,7 +79,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40, game_time={'b': 300,
         elif board[0, col] in ['b', 'bb', 'rb']:
             print("Blue has won!")
             break
-
+    print("Move count:", move_count)
     return board_to_fen(board, player)
 
 
