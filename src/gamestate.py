@@ -343,7 +343,8 @@ def select_move(fen):
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  
         # Gaussfunktion 🤯
-        factor = math.exp(-((position - 0.5) ** 2) / (2 * 0.8 ** 2)) - 0.82
+        #factor = math.exp(-((position - 0.45) ** 2) / (2 * 1 ** 2)) - 0.85
+        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87
         print(factor)
         max_time = max(remaining_time * factor, 0.5)
         #print(max_time)
