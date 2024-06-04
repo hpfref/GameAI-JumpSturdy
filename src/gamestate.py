@@ -312,15 +312,17 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         best_value = value
         best_move = move
         if depth <= len(depth_times):
-            if depth <= 4:
-                
-                next_depth_time_estimate = depth_times[depth - 1] * 4
-            if depth == 5:
-                next_depth_time_estimate = depth_times[depth - 1] ** 2
+            if depth <= 3:
+                next_depth_time_estimate = depth_times[depth - 1] * 1
+            elif depth == 4:
+                next_depth_time_estimate = depth_times[depth - 1] * 2
+            elif depth >= 5:
+                next_depth_time_estimate = depth_times[depth - 1] * 20
                 #print(next_depth_time_estimate)
             else:
                 next_depth_time_estimate = depth_times[depth - 1] ** 4
             if time.time() + next_depth_time_estimate > start_time + max_time:
+                print("HIER")
                 break  
 
         if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
@@ -330,12 +332,12 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
 
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
     return best_move, depth-1, total_nodes_explored
-total_game_time = 120  # Total game time in seconds
+total_game_time = 60  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 10  # for testing
+    max_depth = 7  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
@@ -343,9 +345,10 @@ def select_move(fen):
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  
         # Gaussfunktion 🤯
-        factor = math.exp(-((position - 0.5) ** 2) / (2 * 0.8 ** 2)) - 0.82
+        #factor = math.exp(-((position - 0.45) ** 2) / (2 * 1 ** 2)) - 0.85
+        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87
         print(factor)
-        max_time = max(remaining_time * factor, 0.01)
+        max_time = max((remaining_time * factor)+0.3, 0.01) #0,4 for endgame
         #print(max_time)
         best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
         end_time = time.time()
