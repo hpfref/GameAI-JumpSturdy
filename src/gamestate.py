@@ -239,9 +239,10 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
-        if maximizing_player:
-            return evaluate(board), None, True, nodes_explored # to compare eval functions here
-        else: return evaluate(board), None, True, nodes_explored
+        return evaluate(board), None, True, nodes_explored
+        #if maximizing_player:
+        #    return evaluate(board), None, True, nodes_explored # to compare eval functions here
+        #else: return evaluate(board), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
 
@@ -339,7 +340,7 @@ remaining_time = total_game_time
 
 def select_move(fen):
     global remaining_time, total_game_time
-    max_depth = 155  # for testing
+    max_depth = 20  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
@@ -347,8 +348,7 @@ def select_move(fen):
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  
         # Gaussfunktion 🤯
-        #factor = math.exp(-((position - 0.45) ** 2) / (2 * 1 ** 2)) - 0.85
-        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87
+        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87 # factor for time in current round
         print(factor)
         max_time = max(remaining_time * factor, 0.5)
         #print(max_time)
