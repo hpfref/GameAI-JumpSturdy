@@ -292,7 +292,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
 
 def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player):
     start_time = time.time()
-    depth = 1
+    depth = 0
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0 # for testing
@@ -303,6 +303,8 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         print(f"Searching depth {depth}")
         depth_start_time = time.time()
         value, move, completed, nodes_explored = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
+        #if completed:
+            #print(f"Search completed for depth {depth}. Best move: {move}")
         depth_end_time = time.time()
         depth_time = depth_end_time - depth_start_time
         total_nodes_explored += nodes_explored
@@ -323,11 +325,13 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         remaining_time = max_time - (time.time() - start_time)
         if next_depth_time > remaining_time:
             print(f"Skipping depth {depth+1} as estimated time {next_depth_time} is greater than remaining time {remaining_time}")
+            depth += 1
             break
-
         depth += 1
+        #print(f"Incremented depth: {depth}")
 
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
+    #print(f"Decremented depth: {depth-1}")
     return best_move, depth-1, total_nodes_explored
 
 total_game_time = 120  # Total game time in seconds
