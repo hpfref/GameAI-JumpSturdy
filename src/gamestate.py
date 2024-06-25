@@ -351,7 +351,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         
         if best_move == None:
             best_move = moves[0]
-        return max_eval, best_move, True, nodes_explored  
+            return max_eval, best_move, True, nodes_explored  
         else:
         min_eval = float('inf')
         best_move = None
