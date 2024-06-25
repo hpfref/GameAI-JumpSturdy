@@ -3,6 +3,35 @@ from move_gen import legal_moves
 from board import fen_to_board, board_to_fen
 import time
 import math
+import hashlib
+
+
+
+######################### TRANSPOSITION TABLE #########################################
+
+
+class TranspositionTable:
+    def __init__(self):
+        self.table = {}
+
+    def hash_position(self, board):
+        return hashlib.md5(str(board).encode('utf-8')).hexdigest()
+
+    def store(self, board, depth, value, flag, best_move):
+        hash_key = self.hash_position(board)
+        self.table[hash_key] = (depth, value, flag, best_move)
+
+    def lookup(self, board):
+        hash_key = self.hash_position(board)
+        if hash_key in self.table:
+            return self.table[hash_key]
+        return None
+
+EXACT, LOWERBOUND, UPPERBOUND = 0, 1, 2
+
+########################################################################################
+
+
 
 def random_move(fen):
     board, player = fen_to_board(fen)
@@ -232,10 +261,38 @@ def unmake_move(board, move, start_value, target_value):
 
 
 
-def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
+def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time, tt, aspiration_window=None):
     if time.time() - start_time > max_time:
         return None, None, False, 0  
     nodes_explored = 0 # for testing
+
+
+
+
+#################### TT-Entry ########################################
+
+    tt_entry = tt.lookup(board)
+    if tt_entry:
+        print("in TT gefunden")                             ## LOGGING VON TT NUTZUNG
+        tt_depth, tt_value, tt_flag, tt_best_move = tt_entry
+        if tt_depth >= depth:
+            if tt_flag == EXACT:
+                return tt_value, tt_best_move, True, nodes_explored
+            elif tt_flag == LOWERBOUND and tt_value > alpha:
+                alpha = tt_value
+            elif tt_flag == UPPERBOUND and tt_value < beta:
+                beta = tt_value
+            if alpha >= beta:
+                return tt_value, tt_best_move, True, nodes_explored
+    else :
+        print("NICHT in TT gefunden")                       ## LOGGING VON KEINER TT NUTZUNG
+
+######################################################################
+
+
+
+
+    
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
@@ -246,6 +303,9 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         
     nodes_explored += 1 # for testing 
 
+    if aspiration_window is None:
+    aspiration_window = (alpha,beta)
+
     if maximizing_player:
         max_eval = float('-inf')
         best_move = None
@@ -253,7 +313,8 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             start_value = board[move[0]] # save start field value e.g. b
             target_value = board[move[1]] # save target field value e.g. r
             new_player = make_move(board, player, move, start_value, target_value)
-            eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time)
+            eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time, tt,
+                                                                             aspiration_window)
             nodes_explored += child_nodes_explored
             unmake_move(board, move, start_value, target_value) # restore board 
             if not completed:
@@ -265,45 +326,90 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             if beta <= alpha:  
                 break
             #print(f"Time elapsed for move {move}: {time.time() - start_time}")
+
+                
+
+
+            if max_eval <= aspiration_window[0]:
+                beta = aspiration_window[0]
+                aspiration_window = (alpha, beta + 1)
+            elif max_eval >= aspiration_window[1]:
+                alpha = aspiration_window[1]
+                aspiration_window = (alpha - 1, beta)
+            else:
+                break
+
+        ########################################### TT #############################
+        tt_flag = EXACT if alpha >= beta else LOWERBOUND
+        tt.store(board, depth, max_eval, tt_flag, best_move)
+        ############################################################################
+
+
+
+
+
+        
         if best_move == None:
             best_move = moves[0]
         return max_eval, best_move, True, nodes_explored  
-    else:
+        else:
         min_eval = float('inf')
         best_move = None
-        for move in moves:
-            start_value = board[move[0]] # save start field value e.g. r
-            target_value = board[move[1]] # save target field value e.g. b
-            new_player = make_move(board, player, move, start_value, target_value)
-            eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time)
-            nodes_explored += child_nodes_explored
-            unmake_move(board, move, start_value, target_value) # restore board 
-            if not completed:
-                return None, None, False, nodes_explored  
-            if eval < min_eval:
-                min_eval = eval
-                best_move = move
-            beta = min(beta, eval)
-            if beta <= alpha:  
+        while True:
+            for move in moves:
+                start_value = board[move[0]]  # save start field value e.g. r
+                target_value = board[move[1]]  # save target field value e.g. b
+                new_player = make_move(board, player, move, start_value, target_value)
+                eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta,
+                                                                             True, start_time, max_time, tt,
+                                                                             aspiration_window)
+                nodes_explored += child_nodes_explored
+                unmake_move(board, move, start_value, target_value)  # restore board
+                if not completed:
+                    return None, None, False, nodes_explored
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = move
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+
+            if min_eval <= aspiration_window[0]:
+                beta = aspiration_window[0]
+                aspiration_window = (alpha, beta + 1)
+            elif min_eval >= aspiration_window[1]:
+                alpha = aspiration_window[1]
+                aspiration_window = (alpha - 1, beta)
+            else:
                 break
-        if best_move == None:
+
+        ####################################### TT ###############################
+        tt_flag = EXACT if beta <= alpha else UPPERBOUND
+        tt.store(board, depth, min_eval, tt_flag, best_move)
+        ##########################################################################
+
+        if best_move is None:
             best_move = moves[0]
+        return min_eval, best_move, True, nodes_explored
 
-        return min_eval, best_move, True, nodes_explored  
 
-def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player):
+#Neuer Parameter tt
+
+def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, tt, maximizing_player):
     start_time = time.time()
     depth = 0
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0 # for testing
+    depth_times = []
+    aspiration_window = (best_value - 10, best_value + 10)
 
     while True:
         if depth > max_depth:
             break
         print(f"Searching depth {depth}")
         depth_start_time = time.time()
-        value, move, completed, nodes_explored = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time)
+        value, move, completed, nodes_explored = alpha_beta_search(board, player, depth, float('-inf'), float('inf'), maximizing_player, start_time, max_time, tt, aspiration_window)
         #if completed:
             #print(f"Search completed for depth {depth}. Best move: {move}")
         depth_end_time = time.time()
@@ -313,6 +419,9 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
             break  
         best_value = value
         best_move = move
+
+        aspiration_window = (best_value - 10, best_value + 10)
+        
         if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
             break
         
@@ -339,6 +448,7 @@ total_game_time = 120  # Total game time in seconds
 remaining_time = total_game_time 
 
 def select_move(fen):
+    tt = TranspositionTable()
     global remaining_time, total_game_time
     max_depth = 20  # for testing
     board, player = fen_to_board(fen)
@@ -352,7 +462,7 @@ def select_move(fen):
         print(factor)
         max_time = max(remaining_time * factor, 0.5)
         #print(max_time)
-        best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player)
+        best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, tt, maximizing_player)
         end_time = time.time()
         move_time = end_time - start_time  
         remaining_time = max(remaining_time - move_time - 0.01, 0)
