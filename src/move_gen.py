@@ -2,7 +2,7 @@ import numpy as np
 from collections import deque
 
 
-def legal_moves(board, player) -> list: 
+def legal_moves(board, player): 
     """Return all legal moves for the current player
 
     Args:

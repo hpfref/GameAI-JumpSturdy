@@ -9,7 +9,7 @@ import json
 from network import Network
 pygame.font.init()
 
-from gamestate import select_move
+from gamestate import select_move, select_moveTEST
 from move_gen import translate_single_move
 
 def main():
@@ -61,7 +61,7 @@ def main():
             elif player == 1 and game["player2"]:
                 print("New Board: " + game["board"])
                 ### HIER PLAYER 1
-                i = translate_single_move(select_move(game["board"]))
+                i = translate_single_move(select_moveTEST(game["board"]))
                 print(i) # to debug
                 ###
                 data = json.dumps(i)

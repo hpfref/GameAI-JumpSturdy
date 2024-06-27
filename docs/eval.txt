@@ -1,4 +1,23 @@
-*Dokumentation für ersten Milestone
+
 
 - nähe zu ziellinie linear TRASH -> potenz = goat
+
+- tried eval check win once before loop -> less efficient, than checking every time
+
+- loop x64 more efficient than np.where
+
+- bonus für positions for loop kaum zeitimpact & wird besser nach eyetest
+
+PROBLEM: er rafft free win on 4 eigenen zügen nicht wenn er außen an ecke steht -> mehr value für fordere position ?
+
+- WENN Fortschritt mehr Gewicht -> gewinnt (BESONDERS durch TÜrme) NVM DAS IST GILT NICHT WENN MAN ÜBER SERVER TESTET
+
+-Idee Seitenverlagerung crazy!
+
+PROBLEM 1: ES GEWINNT EINFACH DER STARTER beim testen
+--> LÖSUNG MBY IN VISUALS MIT niedriger TIEFE SPIELEN? -> BESSER FUNKTION GEWINT? !!! klappt auch nicht, macht einfach random shit
+
+PROBLEM 2: er könnte free türme machen und zum sieg hüpfen, ig nicht tief genug
+
+
 

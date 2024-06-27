@@ -57,19 +57,21 @@ def threaded_client(conn, p, gameId):
                         fileLog.write(data)
                         fileLog.write("\n")
                         if not game.getValid():
-                            print("NOT VALID") # debug
                             if game.getCurrentPlayer() == "r":
                                 game.reset()
                                 print("Game finished, win: b")
+                                break
                                 fileLog.write("Game finished, win: b \n")
                             if game.getCurrentPlayer() == "b":
                                 game.reset()
                                 print("Game finished, win: r")
+                                break
                                 fileLog.write("Game finished, win: r \n")
                         win = game.winnerDeter()
                         if not win == "0":
                             game.reset()
                             print("Game finished, win: ",win)
+                            break
                             fileLog.write("Game finished, win: ",win, "\n")
                     output = dict(board = game.getBoard(), player1 = game.getP1Turn(), player2 = game.getP2Turn(), bothConnected = game.bothConnected())
                     output = json.dumps(output)

@@ -15,6 +15,7 @@ class Game:
         self.oldBoard = np.array([["N","r","r","r","r","r","r","N"],[0,"r","r","r","r","r","r",0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,"b","b","b","b","b","b",0],["N","b","b","b","b","b","b","N"]])
         self.newBoard = np.copy(self.oldBoard)
         self.boardObject = "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"
+        self.repeat = ["b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"]
         self.wins = [0,0]
         self.ties = 0
         self.message = ""
@@ -55,10 +56,18 @@ class Game:
     def winnerDeter(self):
         redBaseLine = self.newBoard[0:1]
         blueBaseLine = self.newBoard[7:8]
-        if "r" in blueBaseLine or "br" in blueBaseLine:
-            return "r"
-        elif "b" in redBaseLine or "rb" in redBaseLine:
-            return "b"
+        for i in blueBaseLine[0]:
+            if "r" in i:
+                return "r"
+        for i in redBaseLine[0]:
+            if "b" in i:
+                return "b"
+        count = 0
+        for e in self.repeat:
+            if e == self.boardObject:
+                count += 1
+        if count > 2:
+            return "draw"
         else: return "0"
 
     def getBoard(self):
@@ -221,44 +230,44 @@ class Game:
             #check with single
             if check == True and single == True:
                 if begin[0]+1 != end[0]:
-                    self.valid = False,print("NOT VALID1") # debug
+                    self.valid = False
                 if not (begin[1]+1 == end[1] or begin[1]-1 == end[1]):
-                    self.valid = False,print("NOT VALID2") # debug
+                    self.valid = False
             #no check with single
             if check == False and single == True:
                 if not (self.oldBoard[end[0]][end[1]] == "0" or self.oldBoard[end[0]][end[1]] == "r"):
-                    self.valid = False,print("NOT VALID3") # debug
+                    self.valid = False
                 if not (begin[0]+1 == end[0] or begin[0] == end[0]):
-                    self.valid = False,print("NOT VALID4") # debug
+                    self.valid = False
                 if begin[0] == end[0]:
                     if not (begin[1]-1 == end[1] or begin[1]+1 == end[1]):
-                        self.valid = False,print("NOT VALID5") # debug
+                        self.valid = False
 
                 if begin[0]+1 == end[0]:
                     if not begin[1] == end[1]:
-                        self.valid = False,print("NOT VALID6") # debug
+                        self.valid = False
             #check with double
             if check == True and double == True:
                 if begin[0]+2 == end[0]:
                     if not (begin[1]+1 == end[1] or begin[1]-1 == end[1]):
-                        self.valid = False,print("NOT VALID7") # debug
+                        self.valid = False
                 elif begin[0]+1 == end[0]:
                     if not (begin[1]+2 == end[1] or begin[1]-2 == end[1]):
-                        self.valid = False,print("NOT VALID8") # debug
+                        self.valid = False
                 else: 
-                    self.valid = False,print("NOT VALID9") # debug
+                    self.valid = False
             #no check with double
             if check == False and double == True:
                 if not (self.oldBoard[end[0]][end[1]] == "0" or self.oldBoard[end[0]][end[1]] == "r"):
-                    self.valid = False,print("NOT VALID10") # debug
+                    self.valid = False
                 if begin[0]+2 == end[0]:
                     if not (begin[1]+1 == end[1] or begin[1]-1 == end[1]):
-                        self.valid = False,print("NOT VALID11") # debug
+                        self.valid = False
                 elif begin[0]+1 == end[0]:
                     if not (begin[1]-2 == end[1] or begin[1]+2 == end[1]):
-                        self.valid = False,print("NOT VALID12") # debug
+                        self.valid = False
                 else:
-                    self.valid = False,print("NOT VALID13") # debug
+                    self.valid = False
     
     def doMove(self):
         begin = self.move[0]
@@ -353,4 +362,5 @@ class Game:
             self.currentPlayer = "b"
         else: self.currentPlayer = "r"
         self.boardObject = self.boardObject[:-1] + " " + self.currentPlayer
+        self.repeat.append(self.boardObject)
 

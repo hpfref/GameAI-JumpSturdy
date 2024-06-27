@@ -87,7 +87,7 @@ if __name__ == "__main__":
     pg.init()
     size = width, height = 800, 800
     SQUARE = width // 8
-    FPS = 1.5
+    FPS = 1
     window = pg.display.set_mode(size)
     BOARD = np.full((8, 8), "", dtype='U10')
     for y in range(8):
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             else:
                 BOARD[y, x] = ""
 
-    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r'
+    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
     fen1 = '3b02/2bb2b02/5b0bb1/2r0b04/2rb3b01/1rr1rr2r0r0/5r02/2rr3 b'
     fen2 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen3 = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
@@ -109,6 +109,8 @@ if __name__ == "__main__":
     fen_i_early = "b0b0b02bb/1b01b0bb1b01/2b05/5b02/1r06/8/2r0rrr0rr1r0/r0r01r01r0 r"
     fen_u_early = "bb1b0b0b0b0/b01b0b0b01b01/8/3b04/3r04/2r05/1rr2r0r01r0/1r0r0r0r0r0 r"
     fen_test = '2bb01b0b0/3b0b03/1b03b02/2b01r03/4r01b01/4r01r01/1rr1rr4/1r0r01r01 b'
+
+    fenkrk = '1b02b01/8/1b01b0b0b0b01/b01b01bb2b0/r01r01r02r0/1r0r0rr1r0r01/4r03/4r01 b'
 
     PIECES = load_pieces()
     clock = pg.time.Clock()
