@@ -110,7 +110,7 @@ if __name__ == "__main__":
     fen_u_early = "bb1b0b0b0b0/b01b0b0b01b01/8/3b04/3r04/2r05/1rr2r0r01r0/1r0r0r0r0r0 r"
     fen_test = '2bb01b0b0/3b0b03/1b03b02/2b01r03/4r01b01/4r01r01/1rr1rr4/1r0r01r01 b'
 
-    fenkrk = '1b02b01/8/1b01b0b0b0b01/b01b01bb2b0/r01r01r02r0/1r0r0rr1r0r01/4r03/4r01 b'
+    fenkrk = '1b01b0b0b0/r02b02b0b0/2r02b02/1r0r01b02b0/4r01b01/3r04/6r01/1r01r0r0r0 r'
 
     PIECES = load_pieces()
     clock = pg.time.Clock()

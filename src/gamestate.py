@@ -28,7 +28,7 @@ def game_over(board, player):
 
     return False
 
-def evaluate(board):
+def evaluate(board,player):
     #piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # dunno
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
@@ -93,7 +93,7 @@ def evaluate(board):
     return value
 
 
-def evaluateTest(board):
+def evaluateTest(board,player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
     bonus_positions = [(0, 2), (0, 5), (7, 2), (7, 5)]  # Positions for bonus
@@ -183,9 +183,13 @@ def evaluateTest(board):
     return value
 
 
-def evaluateFREF(board):
+def evaluateFREF(board,player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
+
+    #bonus for current player
+    if(player=='b'):value += 0.25
+    else: value -= 0.25
     
     #bonus positions
     if board[(0, 2)] == 'r':
@@ -219,10 +223,10 @@ def evaluateFREF(board):
                     value += ((1.5**(7 - row)) * 0.3) + 1
 
                 elif piece == 'rr':
-                    value -= ((1.5**row) * 0.5) + 2 
+                    value -= ((1.5**row) * 0.5) + 2
 
                 elif piece == 'bb':
-                    value += ((1.5**(7 - row)) * 0.5) + 2 
+                    value += ((1.5**(7 - row)) * 0.5) + 2
 
                 elif piece == 'br': 
                     value -= ((1.5**row) * 0.3) + 0 
@@ -233,9 +237,13 @@ def evaluateFREF(board):
 
     return value
 
-def evaluateFREFseite(board):
+def evaluateFREFseite(board,player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
+    
+    #bonus for current player
+    if(player=='b'):value += 0.25
+    else: value -= 0.25
     
     #bonus positions
     if board[(0, 2)] == 'r':
@@ -339,11 +347,11 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
-        #return evaluateFREFseite(board), None, True, nodes_explored
+        return evaluateFREF(board,player), None, True, nodes_explored
 
-        if maximizing_player:
-            return evaluate(board), None, True, nodes_explored # to compare eval functions here
-        else: return evaluate(board), None, True, nodes_explored
+        #if maximizing_player:
+        #    return evaluate(board,player), None, True, nodes_explored # to compare eval functions here
+        #else: return evaluate(board,player), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
 
@@ -475,10 +483,10 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
     moves = legal_moves(board, player)
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
-        return evaluateFREF(board), None, True, nodes_explored
+        return evaluateFREF(board,player), None, True, nodes_explored
         #if maximizing_player:
-        #    return evaluate(board), None, True, nodes_explored # to compare eval functions here
-        #else: return evaluateFREF(board), None, True, nodes_explored
+        #    return evaluate(board,player), None, True, nodes_explored # to compare eval functions here
+        #else: return evaluateFREF(board,player), None, True, nodes_explored
         
     nodes_explored += 1 # for testing 
 
