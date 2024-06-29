@@ -1224,7 +1224,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0  # for testing
-    aspiration_window = 6
+    aspiration_window = 7  #alles zwischen 7 und 9 ist schon mal ganz gut
 
     while True:
         if depth > max_depth:
