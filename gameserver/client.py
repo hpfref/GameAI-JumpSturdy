@@ -9,9 +9,9 @@ import json
 from network import Network
 pygame.font.init()
 
-from gamestate import select_move, select_moveTEST
+from gamestate import select_move, select_moveTEST, select_moveTTAW
 from move_gen import translate_single_move
-
+                
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -43,32 +43,32 @@ def main():
             if player == 0 and game["player1"]:
                 #printing not necessary, game["board"] is the way to get the board string
                 print("New Board: " + game["board"])
+                print("New Time: " + str(game["time"]))
 
                 #change to any input you like. This one is just console input. Change it here to respond with your Ai's answer. 
                 #Answer must have format: start-end like E7-F7
 
                 ### HIER PLAYER 0
-                i = translate_single_move(select_move(game["board"]))
+                i = translate_single_move(select_move(game["board"],game["time"]))
                 print(i) #  debug
                 ###
 
                 #json.dumps(i) transforms the input into a json. You can print it, if you want to see the difference
                 data = json.dumps(i)
 
-                #send data via networks
+                #send data via network
                 n.send(data)
-
             elif player == 1 and game["player2"]:
                 print("New Board: " + game["board"])
+                print("New Time: " + str(game["time"]))
+
                 ### HIER PLAYER 1
-                i = translate_single_move(select_moveTEST(game["board"]))
-                print(i) # to debug
+                i = translate_single_move(select_move(game["board"],game["time"]))
+                print(i) #  debug
                 ###
+
                 data = json.dumps(i)
                 n.send(data)
 
 while True:
     main()
-
-
-
