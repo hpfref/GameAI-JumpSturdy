@@ -10,12 +10,18 @@ def legal_moves(board, player):
 
     Returns:
         moves: list of legal moves e.g. [((6, 1), (6, 0)), ...]
+        is_quiescent: ...
+        stack_capture: ...
+        single_capture: ...
     """
     single_capture = deque([])
     stack_capture = deque([])
     stack_nocapture = deque([])
     single_forwards = deque([])
     single_sideways = deque([])
+
+    # Use for quiesence search
+    is_quiescent = True
 
     ### BLUE CASE START ###
 
@@ -55,11 +61,13 @@ def legal_moves(board, player):
                     target = index[0]-1, index[1]-1
                     if index[1] > 0 and board[target] in b_moves_diagonal:
                         single_capture.append((index, (target)))  # Append the valid move to the top left
+                        is_quiescent = False
 
                     # Check top right
                     target = index[0]-1, index[1]+1
                     if index[1] < 7 and board[target] in b_moves_diagonal:
                         single_capture.append((index, (target)))  # Append the valid move to the top right
+                        is_quiescent = False
 
                     # Check top
                     target = index[0]-1, index[1]
@@ -77,6 +85,7 @@ def legal_moves(board, player):
                         target = index[0]-1, index[1]-2
                         if board[target] in bb_capture:
                             stack_capture.append((index, (target)))  # Append the valid move to top left left
+                            is_quiescent = False
                         elif board[target] in bb_nocapture:
                             stack_nocapture.append((index, (target)))  # Append the valid move to top left left
 
@@ -86,6 +95,7 @@ def legal_moves(board, player):
                         target = index[0]-1, index[1]+2
                         if board[target] in bb_capture:
                             stack_capture.append((index, (target)))  # Append the valid move to top right right
+                            is_quiescent = False
                         elif board[target] in bb_nocapture:
                             stack_nocapture.append((index, (target)))  # Append the valid move to top right right
 
@@ -97,6 +107,7 @@ def legal_moves(board, player):
                         target = index[0]-2, index[1]-1
                         if board[target] in bb_capture:
                             stack_capture.append((index, (target))) # Append the valid move to top top left
+                            is_quiescent = False
                         elif board[target] in bb_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to top top left
 
@@ -105,6 +116,7 @@ def legal_moves(board, player):
                         target = index[0]-2, index[1]+1
                         if board[target] in bb_capture:
                             stack_capture.append((index, (target))) # Append the valid move to top top right
+                            is_quiescent = False
                         elif board[target] in bb_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to top top right
             
@@ -148,11 +160,13 @@ def legal_moves(board, player):
                     target = index[0]+1, index[1]-1
                     if index[1] > 0 and board[target] in r_moves_diagonal:
                         single_capture.append((index, (target)))  # Append the valid move to the bottom left
+                        is_quiescent = False
 
                     # Check bottom right
                     target = index[0]+1, index[1]+1
                     if index[1] < 7 and board[target] in r_moves_diagonal:
                         single_capture.append((index, (target)))  # Append the valid move to the bottom right
+                        is_quiescent = False
 
                     # Check bottom
                     target = index[0]+1, index[1]
@@ -170,6 +184,7 @@ def legal_moves(board, player):
                         target = index[0]+1, index[1]-2
                         if board[target] in rr_capture:
                             stack_capture.append((index, (target))) # Append the valid move to the bottom left left
+                            is_quiescent = False
                         elif board[target] in rr_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to the bottom left left
 
@@ -178,6 +193,7 @@ def legal_moves(board, player):
                         target = index[0]+1, index[1]+2
                         if board[target] in rr_capture:
                             stack_capture.append((index, (target))) # Append the valid move to the bottom right right
+                            is_quiescent = False
                         elif board[target] in rr_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to the bottom right right
 
@@ -189,6 +205,7 @@ def legal_moves(board, player):
                         target = index[0]+2, index[1]-1
                         if board[target] in rr_capture:
                             stack_capture.append((index, (target))) # Append the valid move to the bottom bottom left
+                            is_quiescent = False
                         elif board[target] in rr_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to the bottom bottom left
 
@@ -197,19 +214,21 @@ def legal_moves(board, player):
                         target = index[0]+2, index[1]+1
                         if board[target] in rr_capture:
                             stack_capture.append((index, (target))) # Append the valid move to the bottom bottom right
+                            is_quiescent = False
                         elif board[target] in rr_nocapture:
                             stack_nocapture.append((index, (target))) # Append the valid move to the bottom bottom right
   
   
     ### RED CASE END ###
-    stack_capture.extend(single_capture)
-    stack_capture.extend(stack_nocapture)
-    stack_capture.extend(single_forwards)
-    stack_capture.extend(single_sideways)
+    moves = stack_capture.copy()
+    moves.extend(single_capture)
+    moves.extend(stack_nocapture)
+    moves.extend(single_forwards)
+    moves.extend(single_sideways)
 
-    return stack_capture # extend is in place operation, this contains all moves now
+    return moves, is_quiescent, stack_capture, single_capture # extend is in place operation, this contains all moves now
 
-
+    
 
 def translate_single_move(move): # for gameserver
     """Translate indexes of move into the official field names
@@ -279,7 +298,7 @@ if __name__ == "__main__":
     fen_u_early = "bb1b0b0b0b0/b01b0b0b01b01/8/3b04/3r04/2r05/1rr2r0r01r0/1r0r0r0r0r0 r"
     fen_test = '1b0b01b0b0/3b0b03/1b03b02/2b01b03/4r0r0b01/4r01r01/1rr1rr4/1r0r01r01 b'
 
-    moves = legal_moves(fen_test)
+    moves = legal_moves(fen_test)[0]
     print(f"Legal moves: {moves}")
     print(f"Legal moves translated: {translate_moves(moves)}")
     print(f"Number of legal moves: {len(moves)}")

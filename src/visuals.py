@@ -1,8 +1,7 @@
 import numpy as np
 import pygame as pg
 from board import board_to_fen, fen_to_board
-from move_gen import legal_moves
-from gamestate import random_move, game_over, generate_new_board, alpha_beta_search, iterative_deepening_alpha_beta_search, select_move, legal_moves
+from gamestate import random_move, game_over, alpha_beta_search, iterative_deepening_alpha_beta_search, select_move
 
 
 # THIS FILE IS FOR VISUAL REPRESENTATION OF A GAME(STATE) AND DOESN'T HAVE ANY FUNCTIONALITY FOR OUR AI
@@ -87,7 +86,7 @@ if __name__ == "__main__":
     pg.init()
     size = width, height = 800, 800
     SQUARE = width // 8
-    FPS = 1
+    FPS = 0.0001
     window = pg.display.set_mode(size)
     BOARD = np.full((8, 8), "", dtype='U10')
     for y in range(8):
@@ -111,12 +110,13 @@ if __name__ == "__main__":
     fen_test = '2bb01b0b0/3b0b03/1b03b02/2b01r03/4r01b01/4r01r01/1rr1rr4/1r0r01r01 b'
 
     fenkrk = '1b01b0b0b0/r02b02b0b0/2r02b02/1r0r01b02b0/4r01b01/3r04/6r01/1r01r0r0r0 r'
+    fen_mid = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
 
     PIECES = load_pieces()
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen_mid, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()

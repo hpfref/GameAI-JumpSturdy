@@ -12,7 +12,7 @@ from transposition_table import TranspositionTable, EXACT, UPPERBOUND, LOWERBOUN
 
 def random_move(fen):
     board, player = fen_to_board(fen)
-    moves = legal_moves(board, player)
+    moves = legal_moves(board, player)[0]
     if not moves:
         return None
     return random.choice(moves)
@@ -351,23 +351,118 @@ def unmake_move(board, move, start_value, target_value):
 
     return
 
+##### RUHESUCHE
+# would be very good to inspect check moves too here, but finding check moves would be another big overhead (prob in legal_moves())
+
+#changes: legal_moves returns, quiescence_search methode, check in alpha beta, neuer alpha beta parameter
+
+def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
+    nodes_explored = 0
+    board = board_alpaha_beta.copy() #so i dont need to unmake moves afterwards
+
+    capture_moves = single_capture + stack_capture
+    current_player = player
+    max_depth = 6 # is tipically less than that
+    curr_depth = 1
+
+    while curr_depth <= max_depth:
+        
+        # move blue
+        if current_player == 'b':
+            #search for best capture move (depth 1 basically)
+            best_eval = float('-inf')
+            best_move = capture_moves[0]
+            
+            for move in capture_moves:
+                nodes_explored += 1
+                start_value = board[move[0]]
+                target_value = board[move[1]]
+                make_move(board, current_player, move, start_value, target_value)
+                eval_i = evaluateFREF(board,'r') 
+                if eval_i > best_eval:
+                    best_eval = eval_i 
+                    best_move = move
+                unmake_move(board, move, start_value, target_value)
+            
+            #play the move
+            start_value = board[best_move[0]]
+            target_value = board[best_move[1]]
+            current_player = make_move(board, current_player, best_move, start_value, target_value)
+            
+        
+        # move red
+        else:
+            #search for best capture move (depth 1 basically)
+            best_eval = float('inf')
+            best_move = capture_moves[0]
+            
+            for move in capture_moves:
+                nodes_explored += 1
+                start_value = board[move[0]]
+                target_value = board[move[1]]
+                make_move(board, current_player, move, start_value, target_value)
+                eval_i = evaluateFREF(board,'b') 
+                if eval_i < best_eval:
+                    best_eval = eval_i 
+                    best_move = move
+                unmake_move(board, move, start_value, target_value)
+            
+            #play the move
+            start_value = board[best_move[0]]
+            target_value = board[best_move[1]]
+            current_player = make_move(board, current_player, best_move, start_value, target_value)
+
+        # compute moves for opponent in next iteration
+        _, is_quiescent, stack_capture, single_capture = legal_moves(board, current_player)
+        capture_moves = stack_capture + single_capture
+
+        if is_quiescent: #check if capture possible, if not break the lopp
+            break
+        #print(len(capture_moves)) # tipically 1-3 moves possible
+
+        curr_depth+=1
+        
+    
+    return evaluateFREF(board, current_player), nodes_explored
+
 ##### ALPHA BETA WITHOUT TT
 
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
         return None, None, False, 0  
-    nodes_explored = 0 # for testing
-    moves = legal_moves(board, player)
-    if not moves or depth == 0 or game_over(board, player):
-        nodes_explored += 1
+    nodes_explored = 1 # 1 für aktuelles board
+    moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
+
+    if game_over(board, player) or not moves: # or depth==0 jetzt in ruhesuche
         return evaluateFREF(board,player), None, True, nodes_explored
+    
+    global current_iterative_max_depth # too expensive to do for depths 1,2,3
 
-        #if maximizing_player:
-        #    return evaluate(board,player), None, True, nodes_explored # to compare eval functions here
-        #else: return evaluate(board,player), None, True, nodes_explored
-        
-    nodes_explored += 1 # for testing 
+    if depth==0: # RUHESUCHE ab horizont
+        #return evaluateFREF(board,player), None, True, nodes_explored # uncomment to disable quiscent search
+        if current_iterative_max_depth >= 4 and not is_quiescent: # if there are captures possible and searching depth of min. 4
+            eval_quiescence, child_nodes_explored = quiescence_search(board, player, stack_capture, single_capture)
+            nodes_explored += child_nodes_explored
+            return eval_quiescence, None, True, nodes_explored # comment to enable the comparison
 
+            # Idea: playing capture moves can be very bad for a player, but quiescence_search basically forces the player to do so
+            # --> compare result of quiescence_search and eval without it and choose better value
+            # ! seems reasonable but looses against variant without it
+            eval_normal = evaluateFREF(board,player)
+            if maximizing_player:
+                if eval_quiescence > eval_normal:
+                    return eval_quiescence, None, True, nodes_explored
+                else:
+                    return eval_normal, None, True, nodes_explored
+            else:
+                if eval_quiescence > eval_normal:
+                    return eval_normal, None, True, nodes_explored
+                else:
+                    return eval_quiescence, None, True, nodes_explored
+
+        else: # wenn es keine Schlagzüge gibt, also situation 'ruhig' ist
+            return evaluateFREF(board,player), None, True, nodes_explored
+    
     if maximizing_player:
         max_eval = float('-inf')
         best_move = None
@@ -413,9 +508,11 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
 
         return min_eval, best_move, True, nodes_explored  
 
+current_iterative_max_depth = 1
+
 def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player):
     start_time = time.time()
-    depth = 0
+    depth = 1
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0 # for testing
@@ -427,6 +524,8 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         alpha = best_value - aspiration_window
         beta = best_value + aspiration_window
 
+        global current_iterative_max_depth 
+        current_iterative_max_depth = depth # FOR QUIESCENCE CHECK
 
         print(f"Searching depth {depth}")
         depth_start_time = time.time()
@@ -482,6 +581,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
             print(f"Skipping depth {depth+1} as estimated time {next_depth_time} is greater than remaining time {remaining_time}")
             depth += 1
             break
+
         depth += 1
         #print(f"Incremented depth: {depth}")
 
@@ -495,10 +595,10 @@ def select_move(fen,remaining_time):
     global total_game_time
     remaining_time = remaining_time / 1000 # keine lust time management auf ms umzubauen
 
-    #remaining_time = 1000000 # for testing!
-    #total_game_time = 1000000 # for testing!
+    remaining_time = 1000000 # for testing!
+    total_game_time = 1000000 # for testing!
 
-    max_depth = 6  # for testing
+    max_depth = 4  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     
@@ -545,7 +645,7 @@ def alpha_beta_searchTTAW(board, player, depth, alpha, beta, maximizing_player, 
 
 
 
-    moves = legal_moves(board, player)
+    moves = legal_moves(board, player)[0]
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
         eval = evaluateFREF(board, player)
@@ -639,11 +739,8 @@ def iterative_deepening_alpha_beta_searchTTAW(board, player, max_time, max_depth
         depth_time = depth_end_time - depth_start_time
         total_nodes_explored += nodes_explored
 
-
         if not completed:
             break
-
-
 
         if value <= alpha:
             # Research with a larger window
@@ -665,7 +762,6 @@ def iterative_deepening_alpha_beta_searchTTAW(board, player, max_time, max_depth
             total_nodes_explored += nodes_explored
             if not completed:
                 break
-
 
         best_value = value
         best_move = move
@@ -696,8 +792,9 @@ def iterative_deepening_alpha_beta_searchTTAW(board, player, max_time, max_depth
     return best_move, depth - 1, total_nodes_explored
 
 
-def select_moveTTAW(fen):
-    global remaining_time, total_game_time
+def select_moveTTAW(fen,remaining_time):
+    global total_game_time
+    remaining_time = remaining_time / 1000
     max_depth = 4  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
@@ -725,14 +822,14 @@ def select_moveTTAW(fen):
 
 ####################################################################################################################
 
-# Test ohne TT AW für eval vergleich in play_local 
+# Test ohne TT, AW, Ruhesuche für eval vergleich in play_local 
 
 
 def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, start_time, max_time):
     if time.time() - start_time > max_time:
         return None, None, False, 0
     nodes_explored = 0  # for testing
-    moves = legal_moves(board, player)
+    moves = legal_moves(board, player)[0]
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
         return evaluateFREF(board, player), None, True, nodes_explored
@@ -790,29 +887,31 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
         return min_eval, best_move, True, nodes_explored
 
 
-def select_moveTEST(fen):
-    global remaining_time, total_game_time
-    max_depth = 4  # for testing
+def select_moveTEST(fen, remaining_time):
+    global total_game_time
+    remaining_time = remaining_time / 1000 # keine lust time management auf ms umzubauen
+
+    #remaining_time = 1000000 # for testing!
+    #total_game_time = 1000000 # for testing!
+
+    max_depth = 6  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
-
+    
     while remaining_time > 0:
         start_time = time.time()
-        position = 1 - remaining_time / total_game_time
+        position = 1 - remaining_time / total_game_time  
         # Gaussfunktion 🤯
-        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87  # factor for time in current round
+        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87 # factor for time in current round
         print(factor)
         max_time = max(remaining_time * factor, 0.5)
-        # print(max_time)
-        best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_searchTEST(board, player, max_time,
-                                                                                              max_depth,
-                                                                                              maximizing_player)
+        #print(max_time)
+        best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_searchTEST(board, player, max_time, max_depth, maximizing_player)
         end_time = time.time()
-        move_time = end_time - start_time
+        move_time = end_time - start_time  
         remaining_time = max(remaining_time - move_time - 0.01, 0)
-        print(
-            f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}, Time spent: {move_time}, Remaining time: {remaining_time}")
-
+        print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}, Time spent: {move_time}, Remaining time: {remaining_time}")
+        
         return best_move
 
 
