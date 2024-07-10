@@ -302,6 +302,25 @@ def evaluateFREFseite(board, player):
 
     return value
 
+def check_midgame(board):
+    initial_piece_count = 24  
+    current_piece_count = 0
+    for row in board:
+        for piece in row:
+            if piece in ['r', 'b']:  
+                current_piece_count += 1
+            elif piece in ['rr', 'br', 'bb', 'rb']:  
+                current_piece_count += 2
+    pieces_beaten = (initial_piece_count * 2) - current_piece_count
+    return pieces_beaten >= 10
+
+def evalDynamic(board, player):
+    isMidgame = check_midgame(board)
+    if isMidgame:
+        return evaluateFREFseite(board, player)
+    else:
+        return evaluateFREF(board, player)
+
 
 def make_move(board, player, move, start_value, target_value):
     from_pos, to_pos = move
@@ -434,7 +453,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if game_over(board, player) or not moves: # or depth==0 jetzt in ruhesuche
-        return evaluateFREF(board,player), None, True, nodes_explored
+        return evalDynamic(board,player), None, True, nodes_explored
     
     global current_iterative_max_depth # too expensive to do for depths 1,2,3
 
