@@ -52,35 +52,53 @@ def board_to_fen(board, player):
     return fen
 
 def fen_to_board(fen):
-    """
-    Converts a FEN string into our internal board representation as a 2D Numpy Array.
-    
-    This function is designed to convert a FEN-String into the current state of the board ,excluding special fields (corners in this case).
-    
-    Parameters:
-    - fen (str): A string representing the board state in FEN notation. The notation includes the arrangement of pieces on the board,
-                 followed by the current player ('b' or 'r'). The pieces are represented by 'b' for blue and 'r' for red.
-    
+    """Translates the official FEN notation into our internal board representation (2D-numpy array)
+
+    Args:
+        fen: [description]
+
     Returns:
-   board (2D Array): !
-    
-    Note:
-    - The FEN string is parsed in reverse order (from the 8th row to the 1st row) to match the standard FEN notation.
+        board: [description]
+        player: [description]
     """
-    board = [['' for _ in range(8)] for _ in range(8)]  # Initialize an empty 8x8 board
-    rows = fen.split(' ')[0].split('/')  # Split the FEN string into rows, excluding the current player information
-    
-    for y, row in enumerate(rows[::-1]):  # Iterate over rows in reverse order
-        x = 0  # Initialize column index
-        for char in row:  # Iterate over each character in the row string
-            if char.isdigit():  # If the character is a digit, it represents consecutive empty spaces
-                x += int(char)  # Move the column index forward by the number of empty spaces
+    board = np.empty((8, 8), dtype='U10')
+    special_fields = [(0, 0), (0, 7), (7, 0), (7, 7)]
+    for field in special_fields:
+        board[field[1], field[0]] = "X"
+
+    x, y = 0, 7
+    position, player = fen.split()
+    i = 0
+    while i < len(position):
+        if (x, y) in special_fields:
+            x += 1
+            continue
+
+        char = position[i]
+
+        if char.isalpha():
+            if i + 1 < len(position):
+                next_char = position[i + 1]
+                if char == next_char:
+                    piece = char + next_char
+                    board[y, x] = piece
+                    i += 1
+                elif (char == 'r' and next_char == '0') or (char == 'b' and next_char == '0'):
+                    piece = 'r' if char == 'r' else 'b'
+                    board[y, x] = piece
+                    i += 1
+                elif (char == 'r' and next_char == 'b') or (char == 'b' and next_char == 'r'):
+                    piece = 'rb' if char == 'r' else 'br'
+                    board[y, x] = piece
+                    i += 1
             else:
-                # Map the FEN piece notation to our internal representation and place it on the board
-                if char == 'b0':
-                    board[y][x] = 'b'  # Place a blue piece
-                elif char == 'r0':
-                    board[y][x] = 'r'  # Place a red piece
-                x += 1  # Move to the next column after placing a piece or skipping empty spaces
-    
-    return board
+                board[y, x] = char
+            x += 1
+
+        elif char.isdigit():
+            x += int(char)
+        elif char == '/':
+            y -= 1
+            x = 0
+        i += 1
+    return board, player
