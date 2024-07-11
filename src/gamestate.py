@@ -11,28 +11,60 @@ from transposition_table import TranspositionTable, EXACT, UPPERBOUND, LOWERBOUN
 
 
 def random_move(fen):
+    """
+    Selects a random legal move for the current player from a given FEN string. For testing purposes.
+    
+    Parameters:
+    - fen (str): The FEN string representing the current game state.
+    
+    Returns:
+    - str or None: A random legal move for the current player in algebraic notation if there are any legal moves available.
+      Returns None if there are no legal moves available (e.g., in a checkmate or stalemate situation).
+    """
+    
+    # Convert the FEN string to a board representation and determine the current player
     board, player = fen_to_board(fen)
+    
+    # Retrieve the first element from the tuple returned by legal_moves, which contains all legal moves for the player
     moves = legal_moves(board, player)[0]
+    
+    # If there are no legal moves available, return None
     if not moves:
         return None
+    
+    # Otherwise, return a random move from the list of legal moves
     return random.choice(moves)
 
 
 def game_over(board, player):
+    """
+    Determines if the game is over based on the current board state and player.
+    
+    The game is considered over if a red piece reaches the last row or a blue piece reaches the first row.
+    This function checks the board for these conditions.
+    
+    Parameters:
+    - board (2D Array): A 2D Array representing our game board.
+    - player (str): The current player's color ('r' for red or 'b' for blue). This parameter is currently unused in the function,
+                    but could be used for future enhancements or checks specific to the current player.
+    
+    Returns:
+    - bool: True if the game is over (a red piece is on the last row or a blue piece is on the first row), False otherwise.
+    """
+    
     # Check if a red piece is on the last row
-    # board, player = fen_to_board(fen)
     for col in range(8):
-        piece = board[7, col]
-        if piece in ['r', 'rr', 'br']:
-            return True
+        piece = board[7, col]  # Access the piece in the last row and current column
+        if piece in ['r', 'rr', 'br']:  # Check if the piece is a red piece (including promoted and both-color pieces)
+            return True  # Game is over if a red piece is found on the last row
 
     # Check if a blue piece is on the first row
     for col in range(8):
-        piece = board[0, col]
-        if piece in ['b', 'bb', 'rb']:
-            return True
+        piece = board[0, col]  # Access the piece in the first row and current column
+        if piece in ['b', 'bb', 'rb']:  # Check if the piece is a blue piece (including promoted and both-color pieces)
+            return True  # Game is over if a blue piece is found on the first row
 
-    return False
+    return False  # If no winning conditions are met, the game is not over
 
 
 def evaluate(board, player):
@@ -302,54 +334,130 @@ def evaluateFREFseite(board, player):
 
     return value
 
+def check_midgame(board):
+    """
+    Determines if the game has reached the midgame phase based on the number of pieces beaten.
+    
+    The midgame phase is considered to have started once at least 10 pieces have been beaten (removed from the board).
+    This includes both single and promoted pieces. Promoted pieces are counted as two pieces since they represent
+    a piece that has reached the opponent's end of the board and returned.
+    
+    Parameters:
+    - board (2D Array): A 2D Array representing our game board.
+
+    Returns:
+    - bool: True if at least 10 pieces have been beaten (indicating the start of the midgame phase), False otherwise.
+    """
+    
+    initial_piece_count = 24  # The total number of pieces at the start of the game (12 red and 12 blue)
+    current_piece_count = 0  # Initialize the current piece count
+    
+    # Iterate over each row in the board
+    for row in board:
+        # Iterate over each piece in the row
+        for piece in row:
+            # If the piece is a single piece (red or blue), increment the current piece count by 1
+            if piece in ['r', 'b']:
+                current_piece_count += 1
+            # If the piece is a promoted piece (red or blue, returned), increment the current piece count by 2
+            elif piece in ['rr', 'br', 'bb', 'rb']:
+                current_piece_count += 2
+    
+    # Calculate the number of pieces beaten by subtracting the current piece count from twice the initial piece count
+    # This accounts for the fact that promoted pieces are counted twice
+    pieces_beaten = (initial_piece_count * 2) - current_piece_count
+    
+    # Return True if at least 10 pieces have been beaten, indicating the start of the midgame phase
+    return pieces_beaten >= 10
+
+def evalDynamic(board, player):
+    isMidgame = check_midgame(board)
+    if isMidgame:
+        return evaluateFREFseite(board, player)
+    else:
+        return evaluateFREF(board, player)
+
 
 def make_move(board, player, move, start_value, target_value):
-    from_pos, to_pos = move
+    """
+    Executes a move on the board for a given player, updating the board state accordingly.
+    
+    This function handles the logic for moving both blue and red pieces, including the promotion of pieces
+    (e.g., a blue piece becoming 'bb' after moving on another blue piece and vice versa) and the capturing of opponent's pieces.
+    After a move is made, the function clears the original positiono f the moved piece and updates the target position
+    based on the move's start and end positions, the player making the move, and the values at the start and target positions.
+    
+    Parameters:
+    - board (dict): A dictionary representing our game board.
+    - player (str): The current player's color
+    - move (tuple): A tuple containing two tuples, representing the start and end positions of the move, respectively.
+    - start_value (str): The value (piece type) at the start position before the move.
+    - target_value (str): The value (piece type) at the target position before the move.
+    
+    Returns:
+    - str: The color of the next player ('b' if the current player is 'r', and 'r' if the current player is 'b').
+    """
+    
+    from_pos, to_pos = move  # Unpack the start and end positions from the move
 
     if player == "b":
         # Move logic for blue pieces
-        if target_value in ["", "r"]:
-            board[to_pos] = "b"
-        elif target_value == "rr":
-            board[to_pos] = "rb"
-        elif target_value in ["b", "br"]:
-            board[to_pos] = "bb"
+        if target_value in ["", "r"]:  # If the target is empty or contains a red piece
+            board[to_pos] = "b"  # Place a blue piece at the target
+        elif target_value == "rr":  # If the target contains a promoted red piece
+            board[to_pos] = "rb"  # Promote the blue piece by capturing the red piece
+        elif target_value in ["b", "br"]:  # If the target contains a blue piece or a promoted blue piece
+            board[to_pos] = "bb"  # Promote the blue piece
 
-        # Clear the original position
+        # Clear the original position based on the start value
         if start_value == "b":
-            board[from_pos] = ""
+            board[from_pos] = ""  # Clear the position if it was a single blue piece
         elif start_value == "bb":
-            board[from_pos] = "b"
+            board[from_pos] = "b"  # Demote the piece if it was a promoted blue piece
         elif start_value == "rb":
-            board[from_pos] = "r"
+            board[from_pos] = "r"  # Leave a red piece if it was a promoted piece captured by blue
 
     else:
         # Move logic for red pieces
-        if target_value in ["", "b"]:
-            board[to_pos] = "r"
-        elif target_value == "bb":
-            board[to_pos] = "br"
-        elif target_value in ["r", "rb"]:
-            board[to_pos] = "rr"
+        if target_value in ["", "b"]:  # If the target is empty or contains a blue piece
+            board[to_pos] = "r"  # Place a red piece at the target
+        elif target_value == "bb":  # If the target contains a promoted blue piece
+            board[to_pos] = "br"  # Promote the red piece by capturing the blue piece
+        elif target_value in ["r", "rb"]:  # If the target contains a red piece or a promoted red piece
+            board[to_pos] = "rr"  # Promote the red piece
 
-        # Clear the original position
+        # Clear the original position based on the start value
         if start_value == "r":
-            board[from_pos] = ""
+            board[from_pos] = ""  # Clear the position if it was a single red piece
         elif start_value == "rr":
-            board[from_pos] = "r"
+            board[from_pos] = "r"  # Demote the piece if it was a promoted red piece
         elif start_value == "br":
-            board[from_pos] = "b"
+            board[from_pos] = "b"  # Leave a blue piece if it was a promoted piece captured by red
 
-    return 'b' if player == 'r' else 'r'  # Switch the player
+    return 'b' if player == 'r' else 'r'  # Switch the player after the move
 
 
 def unmake_move(board, move, start_value, target_value):
-    from_pos, to_pos = move
+    """
+    Reverses a move on the board, restoring the board to its previous state.
+    
+    Parameters:
+    - board (2D Array): A 2D Array representing our game board.
+    - move (tuple): A tuple containing two tuples, representing the start and end positions of the move, respectively.
+    - start_value (str): The value (piece type) that was originally at the start position before the move was made.
+    - target_value (str): The value (piece type) that was originally at the target position before the move was made.
+    
+    Returns:
+    - None: This function does not return a value but instead directly modifies the board dictionary to reflect the reversed move.
+    """
+    
+    from_pos, to_pos = move  # Unpack the start and end positions from the move
 
+    # Restore the original values at the start and target positions
     board[from_pos] = start_value
     board[to_pos] = target_value
 
-    return
+    # No return value is needed as the board is modified in place
 
 ##### RUHESUCHE
 # would be very good to inspect check moves too here, but finding check moves would be another big overhead (prob in legal_moves())
@@ -434,7 +542,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if game_over(board, player) or not moves: # or depth==0 jetzt in ruhesuche
-        return evaluateFREF(board,player), None, True, nodes_explored
+        return evalDynamic(board,player), None, True, nodes_explored
     
     global current_iterative_max_depth # too expensive to do for depths 1,2,3
 
