@@ -1,7 +1,7 @@
 import numpy as np
 import pygame as pg
 from board import board_to_fen, fen_to_board
-from gamestate import random_move, game_over, alpha_beta_search, iterative_deepening_alpha_beta_search, select_move
+from gamestate import game_over, select_move
 
 
 # THIS FILE IS FOR VISUAL REPRESENTATION OF A GAME(STATE) AND DOESN'T HAVE ANY FUNCTIONALITY FOR OUR AI
@@ -45,6 +45,49 @@ def draw_pieces(board, window, PIECES):
             if piece:
                 window.blit(PIECES[piece], sq2xy((x, y)))
 
+# is a relict from when we didnt use make_move, unmake_move in alpha beta
+def generate_new_board(board, player, move):
+    from_pos, to_pos = move
+    new_board = board.copy()
+
+    if player == "b":
+        # Move logic for blue pieces
+        if new_board[to_pos] in ["", "r"]:
+            new_board[to_pos] = "b"
+        elif new_board[to_pos] == "rr":
+            new_board[to_pos] = "rb"
+        elif new_board[to_pos] in ["b", "br"]:
+            new_board[to_pos] = "bb"
+
+        # Clear the original position
+        if new_board[from_pos] == "b":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "bb":
+            new_board[from_pos] = "b"
+        elif new_board[from_pos] == "rb":
+            new_board[from_pos] = "r"
+
+    else:
+        # Move logic for red pieces
+        if new_board[to_pos] in ["", "b"]:
+            new_board[to_pos] = "r"
+        elif new_board[to_pos] == "bb":    
+            new_board[to_pos] = "br"
+        elif new_board[to_pos] in ["r", "rb"]:
+            new_board[to_pos] = "rr"
+
+        # Clear the original position
+        if new_board[from_pos] == "r":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "rr":
+            new_board[from_pos] = "r"
+        elif new_board[from_pos] == "br":
+            new_board[from_pos] = "b"
+
+    # Switch the player
+    new_player = 'b' if player == 'r' else 'r'
+    return new_board, new_player
+
 
 
 def simulate_game(fen_start, window, pieces, clock, fps=40,):
@@ -62,10 +105,10 @@ def simulate_game(fen_start, window, pieces, clock, fps=40,):
 
         # Make a move
         if player == 'b':
-            best_move = select_move(board_to_fen(board, player)) 
+            best_move = select_move(board_to_fen(board, player),100000)
             move_count += 1
         else:
-            best_move = select_move(board_to_fen(board, player))
+            best_move = select_move(board_to_fen(board, player),100000)
             move_count += 1
         
         board, player = generate_new_board(board, player, best_move)
@@ -86,7 +129,7 @@ if __name__ == "__main__":
     pg.init()
     size = width, height = 800, 800
     SQUARE = width // 8
-    FPS = 0.0001
+    FPS = 1
     window = pg.display.set_mode(size)
     BOARD = np.full((8, 8), "", dtype='U10')
     for y in range(8):
