@@ -146,7 +146,7 @@ def encode_move(move_str):
     return from_index, to_index
 
 def normalize_time_left(time_left, max_time=120000):
-    time_left = max(0, min(time_left, max_time))1
+    time_left = max(0, min(time_left, max_time))
     normalized_time = time_left / max_time
     return normalized_time
 
