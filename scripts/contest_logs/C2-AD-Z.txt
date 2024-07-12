@@ -1,0 +1,79 @@
+Spieler Rot: AD
+Spieler Blau: Z
+
+Red move: B8-B7   ---  time left: 118642
+b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1rrr0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: G1-F1   ---  time left: 119919
+b0b0b0b0bb1/1b0b0b0b0b0b01/8/8/8/8/1rrr0r0r0r0r01/1r0r0r0r0r0 r
+Red move: B7-A5   ---  time left: 117726
+b0b0b0b0bb1/1b0b0b0b0b0b01/8/8/r07/8/1r0r0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: D1-E1   ---  time left: 119789
+b0b01bbbb1/1b0b0b0b0b0b01/8/8/r07/8/1r0r0r0r0r0r01/1r0r0r0r0r0 r
+Red move: B7-B6   ---  time left: 115764
+b0b01bbbb1/1b0b0b0b0b0b01/8/8/r07/1r06/2r0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: B1-C1   ---  time left: 119694
+1bb1bbbb1/1b0b0b0b0b0b01/8/8/r07/1r06/2r0r0r0r0r01/1r0r0r0r0r0 r
+Red move: B6-B5   ---  time left: 114086
+1bb1bbbb1/1b0b0b0b0b0b01/8/8/r0r06/8/2r0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: G2-F2   ---  time left: 119606
+1bb1bbbb1/1b0b0b0b0bb2/8/8/r0r06/8/2r0r0r0r0r01/1r0r0r0r0r0 r
+Red move: C7-C6   ---  time left: 111300
+1bb1bbbb1/1b0b0b0b0bb2/8/8/r0r06/2r05/3r0r0r0r01/1r0r0r0r0r0 b
+Blue move: D2-E2   ---  time left: 119530
+1bb1bbbb1/1b0b01bbbb2/8/8/r0r06/2r05/3r0r0r0r01/1r0r0r0r0r0 r
+Red move: C6-C5   ---  time left: 107317
+1bb1bbbb1/1b0b01bbbb2/8/8/r0r0r05/8/3r0r0r0r01/1r0r0r0r0r0 b
+Blue move: E2-C3   ---  time left: 118895
+1bb1bbbb1/1b0b01b0bb2/2b05/8/r0r0r05/8/3r0r0r0r01/1r0r0r0r0r0 r
+Red move: D8-D7   ---  time left: 104364
+1bb1bbbb1/1b0b01b0bb2/2b05/8/r0r0r05/8/3rrr0r0r01/1r01r0r0r0 b
+Blue move: C2-C3   ---  time left: 118257
+1bb1bbbb1/1b02b0bb2/2bb5/8/r0r0r05/8/3rrr0r0r01/1r01r0r0r0 r
+Red move: B5-B4   ---  time left: 97693
+1bb1bbbb1/1b02b0bb2/2bb5/1r06/r01r05/8/3rrr0r0r01/1r01r0r0r0 b
+Blue move: C3-E4   ---  time left: 117157
+1bb1bbbb1/1b02b0bb2/2b05/1r02b03/r01r05/8/3rrr0r0r01/1r01r0r0r0 r
+Red move: D7-C5   ---  time left: 92584
+1bb1bbbb1/1b02b0bb2/2b05/1r02b03/r01rr5/8/3r0r0r0r01/1r01r0r0r0 b
+Blue move: E4-D4   ---  time left: 112844
+1bb1bbbb1/1b02b0bb2/2b05/1r01b04/r01rr5/8/3r0r0r0r01/1r01r0r0r0 r
+Red move: C5-A4   ---  time left: 88680
+1bb1bbbb1/1b02b0bb2/2b05/r0r01b04/r01r05/8/3r0r0r0r01/1r01r0r0r0 b
+Blue move: B2-B3   ---  time left: 111108
+1bb1bbbb1/4b0bb2/1b0b05/r0r01b04/r01r05/8/3r0r0r0r01/1r01r0r0r0 r
+Red move: B4-C3   ---  time left: 84751
+1bb1bbbb1/4b0bb2/1b0r05/r02b04/r01r05/8/3r0r0r0r01/1r01r0r0r0 b
+Blue move: B3-A4   ---  time left: 108737
+1bb1bbbb1/4b0bb2/2r05/b02b04/r01r05/8/3r0r0r0r01/1r01r0r0r0 r
+Red move: C5-D4   ---  time left: 80866
+1bb1bbbb1/4b0bb2/2r05/b02r04/r07/8/3r0r0r0r01/1r01r0r0r0 b
+Blue move: C1-E2   ---  time left: 106201
+1b01bbbb1/4bbbb2/2r05/b02r04/r07/8/3r0r0r0r01/1r01r0r0r0 r
+Red move: E8-E7   ---  time left: 75077
+1b01bbbb1/4bbbb2/2r05/b02r04/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: E2-C3   ---  time left: 104796
+1b01bbbb1/4b0bb2/2b05/b02r04/r07/8/3r0rrr0r01/1r02r0r0 r
+Red move: D4-C3   ---  time left: 73316
+1b01bbbb1/4b0bb2/2r05/b07/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: E2-D2   ---  time left: 102398
+1b01bbbb1/3b01bb2/2r05/b07/r07/8/3r0rrr0r01/1r02r0r0 r
+Red move: C3-B3   ---  time left: 71330
+1b01bbbb1/3b01bb2/1r06/b07/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: D2-C2   ---  time left: 98504
+1b01bbbb1/2b02bb2/1r06/b07/r07/8/3r0rrr0r01/1r02r0r0 r
+Red move: B3-A3   ---  time left: 68755
+1b01bbbb1/2b02bb2/r07/b07/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: C1-C2   ---  time left: 98109
+3bbbb1/2bb2bb2/r07/b07/r07/8/3r0rrr0r01/1r02r0r0 r
+Red move: A3-A2   ---  time left: 61643
+3bbbb1/r01bb2bb2/8/b07/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: A4-B4   ---  time left: 92608
+3bbbb1/r01bb2bb2/8/1b06/r07/8/3r0rrr0r01/1r02r0r0 r
+Red move: A2-B2   ---  time left: 61446
+3bbbb1/1r0bb2bb2/8/1b06/r07/8/3r0rrr0r01/1r02r0r0 b
+Blue move: B4-B5   ---  time left: 84906
+3bbbb1/1r0bb2bb2/8/8/r0b06/8/3r0rrr0r01/1r02r0r0 r
+Red move: B2-B1   ---  time left: 61439
+r02bbbb1/2bb2bb2/8/8/r0b06/8/3r0rrr0r01/1r02r0r0 b
+
+Game finished, win: r

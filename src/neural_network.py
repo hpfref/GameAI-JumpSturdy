@@ -67,56 +67,6 @@ Red move: E8-E7   ---  time left: 99116
 bb1b0b0b0b0/3b01b01b0/1b06/2b05/2r05/8/1r0r0r0rrr0r01/1r02r0r0 b
 Blue move: F1-E1   ---  time left: 109771
 bb1b0bb1b0/3b01b01b0/1b06/2b05/2r05/8/1r0r0r0rrr0r01/1r02r0r0 r
-Red move: E7-C6   ---  time left: 91379
-bb1b0bb1b0/3b01b01b0/1b06/2b05/2r05/2r05/1r0r0r0r0r0r01/1r02r0r0 b
-Blue move: B1-C3   ---  time left: 106171
-b01b0bb1b0/3b01b01b0/1b0b05/2b05/2r05/2r05/1r0r0r0r0r0r01/1r02r0r0 r
-Red move: C5-B5   ---  time left: 87191
-b01b0bb1b0/3b01b01b0/1b0b05/2b05/1r06/2r05/1r0r0r0r0r0r01/1r02r0r0 b
-Blue move: E1-F3   ---  time left: 102564
-b01b0b01b0/3b01b01b0/1b0b02b02/2b05/1r06/2r05/1r0r0r0r0r0r01/1r02r0r0 r
-Red move: B5-C4   ---  time left: 78067
-b01b0b01b0/3b01b01b0/1b0b02b02/2r05/8/2r05/1r0r0r0r0r0r01/1r02r0r0 b
-Blue move: B3-B4   ---  time left: 99066
-b01b0b01b0/3b01b01b0/2b02b02/1b0r05/8/2r05/1r0r0r0r0r0r01/1r02r0r0 r
-Red move: C7-C6   ---  time left: 68791
-b01b0b01b0/3b01b01b0/2b02b02/1b0r05/8/2rr5/1r01r0r0r0r01/1r02r0r0 b
-Blue move: D1-D2   ---  time left: 95462
-b02b01b0/3bb1b01b0/2b02b02/1b0r05/8/2rr5/1r01r0r0r0r01/1r02r0r0 r
-Red move: C6-B4   ---  time left: 66059
-b02b01b0/3bb1b01b0/2b02b02/1r0r05/8/2r05/1r01r0r0r0r01/1r02r0r0 b
-Blue move: B1-B2   ---  time left: 91872
-3b01b0/1b01bb1b01b0/2b02b02/1r0r05/8/2r05/1r01r0r0r0r01/1r02r0r0 r
-Red move: B4-B3   ---  time left: 61074
-3b01b0/1b01bb1b01b0/1r0b02b02/2r05/8/2r05/1r01r0r0r0r01/1r02r0r0 b
-Blue move: F2-F3   ---  time left: 88405
-3b01b0/1b01bb3b0/1r0b02bb2/2r05/8/2r05/1r01r0r0r0r01/1r02r0r0 r
-Red move: B7-B6   ---  time left: 54155
-3b01b0/1b01bb3b0/1r0b02bb2/2r05/8/1r0r05/3r0r0r0r01/1r02r0r0 b
-Blue move: E1-E2   ---  time left: 84897
-5b0/1b01bbb02b0/1r0b02bb2/2r05/8/1r0r05/3r0r0r0r01/1r02r0r0 r
-Red move: B6-B5   ---  time left: 49593
-5b0/1b01bbb02b0/1r0b02bb2/2r05/1r06/2r05/3r0r0r0r01/1r02r0r0 b
-Blue move: F3-G5   ---  time left: 81434
-5b0/1b01bbb02b0/1r0b02b02/2r05/1r04b01/2r05/3r0r0r0r01/1r02r0r0 r
-Red move: C6-C5   ---  time left: 45319
-5b0/1b01bbb02b0/1r0b02b02/2r05/1r0r03b01/8/3r0r0r0r01/1r02r0r0 b
-Blue move: F3-F4   ---  time left: 77954
-5b0/1b01bbb02b0/1r0b05/2r02b02/1r0r03b01/8/3r0r0r0r01/1r02r0r0 r
-Red move: C5-C4   ---  time left: 41234
-5b0/1b01bbb02b0/1r0b05/2rr2b02/1r04b01/8/3r0r0r0r01/1r02r0r0 b
-Blue move: D2-C4   ---  time left: 77503
-5b0/1b01b0b02b0/1r0b05/2rb2b02/1r04b01/8/3r0r0r0r01/1r02r0r0 r
-Red move: B5-C4   ---  time left: 40292
-5b0/1b01b0b02b0/1r0b05/2rr2b02/6b01/8/3r0r0r0r01/1r02r0r0 b
-Blue move: C3-D3   ---  time left: 77344
-5b0/1b01b0b02b0/1r01b04/2rr2b02/6b01/8/3r0r0r0r01/1r02r0r0 r
-Red move: C4-B2   ---  time left: 40217
-5b0/1r01b0b02b0/1r01b04/2r02b02/6b01/8/3r0r0r0r01/1r02r0r0 b
-Blue move: D3-C4   ---  time left: 77344
-5b0/1r01b0b02b0/1r06/2b02b02/6b01/8/3r0r0r0r01/1r02r0r0 r
-Red move: B2-B1   ---  time left: 40216
-r04b0/3b0b02b0/1r06/2b02b02/6b01/8/3r0r0r0r01/1r02r0r0 b
 """
 def encode_board_state(board_state_str):
     piece_to_int = {'b': 1, 'bb': 2, 'rb': 3, 'r': 4, 'rr': 5, 'br': 6}

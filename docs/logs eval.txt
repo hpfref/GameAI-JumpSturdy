@@ -1,0 +1,37 @@
+AD-AI: 
+- AD rot
+- Pawn-Structure von Blau im Midgame sehr schwach, AD-Piece steht den Großteil des Spiels links in der blauen Corner und wird durch blauen Turm gedeckt, am Ende entscheidet Blau den Turm aufzulösen und verliert deswegen (hätte aber auch strukturell soon verloren)
+
+AD-C:
+- AD rot
+- AD extrem goofy Struktur, Blau aber einfach terrible 
+
+AD-G:
+- AD rot
+- G spielt wie ich auf 5 Promille
+
+AD-Z:
+- AD rot
+- Blau baut Türme
+- AD gewinnt wieder wegen linker blauer Corner
+
+AI-AD:
+- AD blau
+- Langes Game, Early Game fast mirrored
+- AD hat wieder das isolated Piece in der linken enemy Corner 
+- AD win, rot aber auch einen Move vor Win 
+- nochmal angucken
+
+C-AD
+- AD blau
+- AD wieder extrem früh linken Pieces weit advanced
+- Win durch 2 advanced Pieces auf links, Rest der Pieces fast in Grundstruktur
+
+G-AD
+- AD hatte wieder genau das gleiche Piece und hats einfach weggeinted
+- Viele Pieces 4free verloren 
+
+Z-AD
+- Rot baut Türme
+- AD versucht den gleichen Move diesmal auf rechts, dann stuck in der Corner
+- Rot hat ganze Game 3 Türme rumstehen die gar nichts machen - Game nicht wirklich knapp

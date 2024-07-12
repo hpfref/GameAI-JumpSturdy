@@ -1,0 +1,79 @@
+Spieler Rot: AD
+Spieler Blau: G
+
+Red move: B8-B7   ---  time left: 118568
+b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1rrr0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: B1-B2   ---  time left: 118659
+1b0b0b0b0b0/1bbb0b0b0b0b01/8/8/8/8/1rrr0r0r0r0r01/1r0r0r0r0r0 r
+Red move: B7-A5   ---  time left: 117560
+1b0b0b0b0b0/1bbb0b0b0b0b01/8/8/r07/8/1r0r0r0r0r0r01/1r0r0r0r0r0 b
+Blue move: D1-D2   ---  time left: 117814
+1b01b0b0b0/1bbb0bbb0b0b01/8/8/r07/8/1r0r0r0r0r0r01/1r0r0r0r0r0 r
+Red move: D8-D7   ---  time left: 116480
+1b01b0b0b0/1bbb0bbb0b0b01/8/8/r07/8/1r0r0rrr0r0r01/1r01r0r0r0 b
+Blue move: B2-C4   ---  time left: 117009
+1b01b0b0b0/1b0b0bbb0b0b01/8/2b05/r07/8/1r0r0rrr0r0r01/1r01r0r0r0 r
+Red move: D7-C5   ---  time left: 115066
+1b01b0b0b0/1b0b0bbb0b0b01/8/2b05/r01r05/8/1r0r0r0r0r0r01/1r01r0r0r0 b
+Blue move: D2-B3   ---  time left: 115215
+1b01b0b0b0/1b0b0b0b0b0b01/1b06/2b05/r01r05/8/1r0r0r0r0r0r01/1r01r0r0r0 r
+Red move: B7-B6   ---  time left: 113762
+1b01b0b0b0/1b0b0b0b0b0b01/1b06/2b05/r01r05/1r06/2r0r0r0r0r01/1r01r0r0r0 b
+Blue move: G1-G2   ---  time left: 113678
+1b01b0b01/1b0b0b0b0b0bb1/1b06/2b05/r01r05/1r06/2r0r0r0r0r01/1r01r0r0r0 r
+Red move: C7-C6   ---  time left: 111606
+1b01b0b01/1b0b0b0b0b0bb1/1b06/2b05/r01r05/1r0r05/3r0r0r0r01/1r01r0r0r0 b
+Blue move: B2-B3   ---  time left: 109405
+1b01b0b01/2b0b0b0b0bb1/1bb6/2b05/r01r05/1r0r05/3r0r0r0r01/1r01r0r0r0 r
+Red move: C6-C5   ---  time left: 110293
+1b01b0b01/2b0b0b0b0bb1/1bb6/2b05/r01rr5/1r06/3r0r0r0r01/1r01r0r0r0 b
+Blue move: G2-F4   ---  time left: 106032
+1b01b0b01/2b0b0b0b0b01/1bb6/2b02b02/r01rr5/1r06/3r0r0r0r01/1r01r0r0r0 r
+Red move: D7-D6   ---  time left: 105226
+1b01b0b01/2b0b0b0b0b01/1bb6/2b02b02/r01rr5/1r01r04/4r0r0r01/1r01r0r0r0 b
+Blue move: F1-F2   ---  time left: 101593
+1b01b02/2b0b0b0bbb01/1bb6/2b02b02/r01rr5/1r01r04/4r0r0r01/1r01r0r0r0 r
+Red move: E7-E6   ---  time left: 98757
+1b01b02/2b0b0b0bbb01/1bb6/2b02b02/r01rr5/1r01r0r03/5r0r01/1r01r0r0r0 b
+Blue move: E1-E2   ---  time left: 98079
+1b04/2b0b0bbbbb01/1bb6/2b02b02/r01rr5/1r01r0r03/5r0r01/1r01r0r0r0 r
+Red move: F7-F6   ---  time left: 90943
+1b04/2b0b0bbbbb01/1bb6/2b02b02/r01rr5/1r01r0r0r02/6r01/1r01r0r0r0 b
+Blue move: B3-D4   ---  time left: 96568
+1b04/2b0b0bbbbb01/1b06/2b0b01b02/r01rr5/1r01r0r0r02/6r01/1r01r0r0r0 r
+Red move: C5-B3   ---  time left: 82096
+1b04/2b0b0bbbbb01/1r06/2b0b01b02/r01r05/1r01r0r0r02/6r01/1r01r0r0r0 b
+Blue move: D4-C4   ---  time left: 95135
+1b04/2b0b0bbbbb01/1r06/2bb2b02/r01r05/1r01r0r0r02/6r01/1r01r0r0r0 r
+Red move: B3-C2   ---  time left: 76898
+1b04/2r0b0bbbbb01/8/2bb2b02/r01r05/1r01r0r0r02/6r01/1r01r0r0r0 b
+Blue move: C4-B6   ---  time left: 94977
+1b04/2r0b0bbbbb01/8/2b02b02/r01r05/1b01r0r0r02/6r01/1r01r0r0r0 r
+Red move: D6-D5   ---  time left: 67653
+1b04/2r0b0bbbbb01/8/2b02b02/r01r0r04/1b02r0r02/6r01/1r01r0r0r0 b
+Blue move: E2-F4   ---  time left: 93346
+1b04/2r0b0b0bbb01/8/2b02bb2/r01r0r04/1b02r0r02/6r01/1r01r0r0r0 r
+Red move: D5-C4   ---  time left: 64980
+1b04/2r0b0b0bbb01/8/2r02bb2/r01r05/1b02r0r02/6r01/1r01r0r0r0 b
+Blue move: F4-E6   ---  time left: 93202
+1b04/2r0b0b0bbb01/8/2r02b02/r01r05/1b02b0r02/6r01/1r01r0r0r0 r
+Red move: C5-C4   ---  time left: 62271
+1b04/2r0b0b0bbb01/8/2rr2b02/r07/1b02b0r02/6r01/1r01r0r0r0 b
+Blue move: B6-B7   ---  time left: 92396
+1b04/2r0b0b0bbb01/8/2rr2b02/r07/4b0r02/1b04r01/1r01r0r0r0 r
+Red move: C8-B7   ---  time left: 61152
+1b04/2r0b0b0bbb01/8/2rr2b02/r07/4b0r02/1r04r01/3r0r0r0 b
+Blue move: E6-E7   ---  time left: 91884
+1b04/2r0b0b0bbb01/8/2rr2b02/r07/5r02/1r02b01r01/3r0r0r0 r
+Red move: F8-E7   ---  time left: 60870
+1b04/2r0b0b0bbb01/8/2rr2b02/r07/5r02/1r02r01r01/3r01r0 b
+Blue move: G2-G3   ---  time left: 91694
+1b04/2r0b0b0bb2/6b01/2rr2b02/r07/5r02/1r02r01r01/3r01r0 r
+Red move: C4-D2   ---  time left: 60849
+1b04/2r0r0b0bb2/6b01/2r02b02/r07/5r02/1r02r01r01/3r01r0 b
+Blue move: E2-E3   ---  time left: 91601
+1b04/2r0r01bb2/4b01b01/2r02b02/r07/5r02/1r02r01r01/3r01r0 r
+Red move: D2-C1   ---  time left: 60842
+1r04/2r02bb2/4b01b01/2r02b02/r07/5r02/1r02r01r01/3r01r0 b
+
+Game finished, win: r
