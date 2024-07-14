@@ -159,7 +159,7 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen_mid, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()

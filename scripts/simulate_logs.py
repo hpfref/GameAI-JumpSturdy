@@ -57,9 +57,9 @@ if __name__ == "__main__":
     pieces = load_pieces()  # Define this function as per your requirements
 
     # Extract FENs from the file
-    fens = extract_fens("scripts/contest_logs/C2-Z-AD.txt")
+    fens = extract_fens("scripts/contest_logs/letzte.txt")
 
-    fps=1
+    fps=0.4
 
     # Simulate the game using the extracted FENs
     simulate_game(fens, window, pieces, clock, fps)

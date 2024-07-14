@@ -1,0 +1,1 @@
+!nicht einfach random zug spielen wenn wir infinity value sehen
