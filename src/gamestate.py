@@ -315,22 +315,15 @@ def check_midgame(board):
     initial_piece_count = 24  # The total number of pieces at the start of the game (12 red and 12 blue)
     current_piece_count = 0  # Initialize the current piece count
     
-    # Iterate over each row in the board
     for row in board:
-        # Iterate over each piece in the row
         for piece in row:
-            # If the piece is a single piece (red or blue), increment the current piece count by 1
             if piece in ['r', 'b']:
                 current_piece_count += 1
-            # If the piece is a promoted piece (red or blue, returned), increment the current piece count by 2
             elif piece in ['rr', 'br', 'bb', 'rb']:
                 current_piece_count += 2
     
-    # Calculate the number of pieces beaten by subtracting the current piece count from twice the initial piece count
-    # This accounts for the fact that promoted pieces are counted twice
     pieces_beaten = (initial_piece_count * 2) - current_piece_count
-    
-    # Return True if at least 10 pieces have been beaten, indicating the start of the midgame phase
+
     return pieces_beaten >= 10
 
 def evalDynamic(board, player):
