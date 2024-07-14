@@ -49,7 +49,7 @@ def main():
                 #Answer must have format: start-end like E7-F7
 
                 ### HIER PLAYER 0
-                i = translate_single_move(select_moveTEST(game["board"],game["time"]))
+                i = translate_single_move(select_move(game["board"],game["time"]))
                 print(i) #  debug
                 ###
 
@@ -63,7 +63,7 @@ def main():
                 print("New Time: " + str(game["time"]))
 
                 ### HIER PLAYER 1
-                i = translate_single_move(select_move(game["board"],game["time"]))
+                i = translate_single_move(select_moveTEST(game["board"],game["time"]))
                 print(i) #  debug
                 ###
 

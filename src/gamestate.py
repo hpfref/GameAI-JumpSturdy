@@ -279,6 +279,68 @@ def evaluateFREF(board, player):
     return value
 
 
+
+def evaluateFREFTest(board, player):
+    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
+    value = 0
+
+    # bonus for current player
+    if (player == 'b'):
+        value += 0.25
+    else:
+        value -= 0.25
+
+    # bonus positions
+    if board[(0, 2)] == 'r':
+        value -= 0.5
+
+    if board[(0, 5)] == 'r':
+        value -= 0.5
+
+    if board[(7, 2)] == 'b':
+        value += 0.5
+
+    if board[(7, 5)] == 'b':
+        value += 0.5
+
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in pieces:
+                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    return float('-inf')  # Red wins
+
+                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    return float('inf')  # Blue wins
+
+                trade_factor = 1.0
+                if player == 'b':
+                    if value > 2:
+                        trade_factor = 0.8  # Encourage trades when ahead
+                    elif value < -2:
+                        trade_factor = 1.1  # Discourage trades when behind
+                # Piece value adjustments
+                elif player == 'r':
+                    if value < -2:
+                        trade_factor = 0.8  # Encourage trades when ahead
+                    elif value > 2:
+                        trade_factor = 1.2  # Discourage trades when behind
+                if piece == 'r':
+                    value -= trade_factor * ((1.5 ** row) * 0.3) + 1
+                elif piece == 'b':
+                    value += trade_factor * ((1.5 ** (7 - row)) * 0.3) + 1
+                elif piece == 'rr':
+                    value -= trade_factor * ((1.5 ** row) * 0.5) + 2
+                elif piece == 'bb':
+                    value += trade_factor * ((1.5 ** (7 - row)) * 0.5) + 2
+                elif piece == 'br':
+                    value -= trade_factor * ((1.5 ** row) * 0.3) + 0
+                elif piece == 'rb':
+                    value += trade_factor * ((1.5 ** (7 - row)) * 0.3) + 0
+    return value
+
 def evaluateFREFseite(board, player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
@@ -352,22 +414,15 @@ def check_midgame(board):
     initial_piece_count = 24  # The total number of pieces at the start of the game (12 red and 12 blue)
     current_piece_count = 0  # Initialize the current piece count
     
-    # Iterate over each row in the board
     for row in board:
-        # Iterate over each piece in the row
         for piece in row:
-            # If the piece is a single piece (red or blue), increment the current piece count by 1
             if piece in ['r', 'b']:
                 current_piece_count += 1
-            # If the piece is a promoted piece (red or blue, returned), increment the current piece count by 2
             elif piece in ['rr', 'br', 'bb', 'rb']:
                 current_piece_count += 2
     
-    # Calculate the number of pieces beaten by subtracting the current piece count from twice the initial piece count
-    # This accounts for the fact that promoted pieces are counted twice
     pieces_beaten = (initial_piece_count * 2) - current_piece_count
-    
-    # Return True if at least 10 pieces have been beaten, indicating the start of the midgame phase
+
     return pieces_beaten >= 10
 
 def evalDynamic(board, player):
@@ -542,7 +597,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if game_over(board, player) or not moves: # or depth==0 jetzt in ruhesuche
-        return evalDynamic(board,player), None, True, nodes_explored
+        return evaluateFREF(board,player), None, True, nodes_explored
     
     global current_iterative_max_depth # too expensive to do for depths 1,2,3
 
@@ -940,7 +995,7 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
     moves = legal_moves(board, player)[0]
     if not moves or depth == 0 or game_over(board, player):
         nodes_explored += 1
-        return evaluateFREF(board, player), None, True, nodes_explored
+        return evaluateFREFTest(board, player), None, True, nodes_explored
         # if maximizing_player:
         #    return evaluate(board,player), None, True, nodes_explored # to compare eval functions here
         # else: return evaluateFREF(board,player), None, True, nodes_explored
