@@ -7,7 +7,7 @@ import time
 import unittest
 import timeit
 from board import fen_to_board
-from gamestate import select_move, evaluate, select_moveTTAW
+from gamestate import select_move, evaluate, select_moveTEST
 import cProfile
 import pstats
 
@@ -22,7 +22,7 @@ def test_function_runtime(func, *args, **kwargs):
 def test_search_algorithms(fen, select_move, select_min_max_move):
     # Test Alpha-Beta Search
     print("Testing Alpha-Beta Search")
-    best_move_ab, runtime_ab = test_function_runtime(select_move, fen)
+    best_move_ab, runtime_ab = test_function_runtime(select_moveTEST, fen)
     #
     time_total_ab = timeit.repeat("select_move(fen)", globals=locals(), number=1, repeat=10)
     time_avg_ab = sum(time_total_ab) / 10

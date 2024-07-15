@@ -1,0 +1,89 @@
+P2 connected 
+Time remaining active player: 119410
+b0b0b0b0b01/1b0b0b0b0b0bb1/8/8/8/1r06/2r0r0r0r0r01/r0r0r0r0r0r0 r
+G1-G2
+Time remaining active player: 118857
+b0b0b0b0b01/1b0b0b0b0b0b01/8/5b02/8/1r0r05/3r0r0r0r01/r0r0r0r0r0r0 r
+G2-F4
+Time remaining active player: 117852
+b0b0b01b01/1b0b0b0bbb0b01/8/5b02/8/1r0r01r03/3r01r0r01/r0r0r0r0r0r0 r
+E1-E2
+Time remaining active player: 115524
+b0b0b01b01/2b0b0bbb0b01/1b06/5b02/8/1r0r01r03/3r01r0rr1/r0r0r0r0r01 r
+B2-B3
+Time remaining active player: 112426
+b0b0b01b01/2b01bbb0b01/1b01b04/5b02/5r02/1r0r01r03/3r01r0r01/r0r0r0r0r01 r
+D2-D3
+Time remaining active player: 110004
+b0b0b01b01/2b01b0b0b01/1b01b04/3b01b02/5r02/1r0r01r03/3rr1r0r01/r0r01r0r01 r
+E2-D4
+Time remaining active player: 108864
+b0b0b01b01/4b0b0b01/1b0b0b04/3b01b02/5r02/1r0r01r0r02/3r01r0r01/r0r01r0r01 r
+C2-C3
+Time remaining active player: 107495
+b0b0b01b01/4b0b0b01/1b0b0b04/5b02/4b0r02/1r0r02r02/3r01r0r01/r0r01r0r01 r
+D4-E5
+Time remaining active player: 106058
+b0b0b01b01/4b0b0b01/1b0b0b04/8/4b0r02/1r0r05/3r01r0r01/r0r01r0r01 r
+F4-E5
+Time remaining active player: 104733
+b0b0b01b01/4b0b0b01/1b0b05/3b04/4b0r02/1r0r02r02/3r02r01/r0r01r0r01 r
+D3-D4
+Time remaining active player: 101793
+b0b0b01b01/4b0b0b01/1b0b05/3b04/5r02/2rr2b02/3r02r01/r0r01r0r01 r
+E5-F6
+Time remaining active player: 94545
+b0b0b01b01/4b0b0b01/2b05/1b01b04/5r02/2rr2r02/3r04/r0r01r0r01 r
+B3-B4
+Time remaining active player: 87001
+b0b0b01b01/4b01b01/2b02b02/1b01b04/4r0r02/2r02r02/3r04/r0r01r0r01 r
+F2-F3
+Time remaining active player: 83117
+b0b0b01b01/4b01b01/5b02/1b01b04/5r02/2r02r02/3r04/r0r01r0r01 r
+C3-D4
+Time remaining active player: 73835
+b0b0b01b01/4b01b01/8/1b01b01b02/5r02/2r0r01r02/8/r0r01r0r01 r
+F3-F4
+Time remaining active player: 72350
+b0b0b01b01/4b01b01/8/3b01b02/1b03r02/2rr2r02/8/r0r01r0r01 r
+B4-B5
+Time remaining active player: 70083
+b0b0b01b01/4b01b01/8/3r01b02/5r02/2b02r02/8/r0r01r0r01 r
+B5-C6
+Time remaining active player: 67285
+b0b0b01b01/4b01b01/8/3r01b02/5r02/1b03r02/1r06/1r01r0r01 r
+C6-B6
+Time remaining active player: 64470
+b0b02b01/3b0b01b01/8/3r01b02/5r02/1b03r02/1r06/1r0r01r01 r
+D1-D2
+Time remaining active player: 61698
+b0b02b01/4bb1b01/8/3r01b02/5r02/1b03r02/1r06/1rr2r01 r
+D2-E2
+Time remaining active player: 59579
+b0b02b01/4b01b01/8/2r02bb2/5r02/1b03r02/1r06/1rr2r01 r
+E2-F4
+Time remaining active player: 58514
+b0b02b01/4b01b01/8/2r02b02/3b0r03/1b03r02/1r06/1rr2r01 r
+F4-D5
+Time remaining active player: 56649
+b0b02b01/4b03/6b01/2r02b02/3b0r03/1r03r02/1r06/1r02r01 r
+G2-G3
+Time remaining active player: 52964
+b0b02b01/4b03/6b01/2r02b02/5r02/1r01b01r02/1r06/1r02r01 r
+D5-D6
+Time remaining active player: 46150
+b0b02b01/4b03/5b02/2r02b02/1r03r02/3b01r02/1r06/1r02r01 r
+G3-F3
+Time remaining active player: 41764
+b0b02b01/4b03/8/1r0r02bb2/5r02/3b01r02/1r06/1r02r01 r
+F3-F4
+Time remaining active player: 40075
+b0b02b01/4b03/8/1r0r02b02/6r01/3b0b0r02/1r06/1r02r01 r
+F4-E6
+Time remaining active player: 40062
+b0b02b01/4b03/8/1r0r02r02/8/4bbr02/1r06/1r02r01 r
+D6-E6
+Time remaining active player: 40068
+b0b02b01/4b03/8/1r0r02r02/8/4b0r02/1r0r05/4b01 r
+E6-F8
+Game finished, win: b

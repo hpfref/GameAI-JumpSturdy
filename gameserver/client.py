@@ -63,7 +63,7 @@ def main():
                 print("New Time: " + str(game["time"]))
 
                 ### HIER PLAYER 1
-                i = translate_single_move(select_move(game["board"],game["time"]))
+                i = translate_single_move(select_moveTEST(game["board"],game["time"]))
                 print(i) #  debug
                 ###
 

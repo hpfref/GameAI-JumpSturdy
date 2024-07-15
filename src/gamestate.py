@@ -239,8 +239,52 @@ def evaluateFREF2(board, player):
 
                 elif piece == 'rb':
                     value += ((1.5 ** (7 - row)) * 0.3) + 0
+    density_bonus = piece_density(board)
+    value += density_bonus * 0.1  
 
+    under_attack_penalty = piece_under_attack(board, player)
+    value -= under_attack_penalty * 0.5  
     return value
+
+def piece_under_attack(board, player):
+    """Calculate how many friendly pieces are under attack based on the current board and player."""
+    enemy = 'b' if player == 'r' else 'r'  
+    attack_positions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]  
+    amount = 0
+    for row in range(8):
+        for col in range(8):
+            if board.get((row, col), '').startswith(player):  
+                for d_row, d_col in attack_positions:
+                    if 0 <= row + d_row < 8 and 0 <= col + d_col < 8:  
+                        if board.get((row + d_row, col + d_col), '').startswith(enemy):  
+                            amount += 1
+                            break  
+    return amount
+
+def piece_density(board):
+    """Calculate the piece density of the board based on the current board structure."""
+    positions = []
+    total_distance = 0
+
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            if board[row][col] != '':  
+                positions.append((col, row))
+
+    for i in range(len(positions)):
+        for j in range(i + 1, len(positions)):
+            x1, y1 = positions[i]
+            x2, y2 = positions[j]
+            distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            total_distance += distance
+
+    if len(positions) == 0:
+        return 0
+    avg_distance = total_distance / len(positions)
+
+    return avg_distance
+
+
 
 def evaluateFREFseite(board, player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
@@ -733,7 +777,7 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if not moves or game_over(board, player): # or depth==0 jetzt in ruhesuche
-        eval = evaluateFREF(board,player)
+        eval = evaluateFREF2(board,player)
         tt.store(zobrist_hash, depth, eval, EXACT, None)
         return eval, None, True, nodes_explored
         #return evalDynamic(board,player), None, True, nodes_explored 
@@ -764,7 +808,7 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
                     return eval_quiescence, None, True, nodes_explored
 
         else: # wenn es keine Schlagzüge gibt, also situation 'ruhig' ist
-            return evaluateFREF(board,player), None, True, nodes_explored
+            return evaluateFREF2(board,player), None, True, nodes_explored
     
     if maximizing_player:
         max_eval = float('-inf')

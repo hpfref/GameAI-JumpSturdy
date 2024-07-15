@@ -122,6 +122,7 @@ def simulate_game(fen_start, window, pieces, clock, fps=40,):
             print("Blue has won!")
             break
     print("Move count:", move_count)
+    print(board)
     return board_to_fen(board, player)
 
 
@@ -159,7 +160,7 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     # Start the simulation
-    final_fen = simulate_game(fen, window, PIECES, clock, FPS)
+    final_fen = simulate_game(fen_red_in_three, window, PIECES, clock, FPS)
     print("Final FEN:", final_fen)
 
     pg.quit()

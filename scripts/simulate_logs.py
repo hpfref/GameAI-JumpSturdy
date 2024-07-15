@@ -57,7 +57,7 @@ if __name__ == "__main__":
     pieces = load_pieces()  # Define this function as per your requirements
 
     # Extract FENs from the file
-    fens = extract_fens("scripts/contest_logs/letzte.txt")
+    fens = extract_fens("scripts/contest_logs/01627612.txt")
 
     fps=0.4
 
