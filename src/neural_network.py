@@ -11,9 +11,7 @@ from tensorflow import keras
 
 
 
-# Aktuell ist Model-Input: Jeder Move aus einem(! Problem) Spiel und Output ist Move Evaluation
-
-# Sollte (glaub ich) sein: Input: Move und Evaluation, Output: Ausgang des Spiels --- Problem hierbei ist das wir immer noch nur ein Spiel anschauen 
+# Leider nicht geeignet - uns fehlt Datenbasis 
 
 
 def parse_game_logs(game_logs):
