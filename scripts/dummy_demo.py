@@ -5,9 +5,11 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
 ###
 import numpy as np
 import pygame as pg
-from visuals import load_pieces, draw_board, draw_pieces
+from visuals import load_pieces, draw_board, draw_pieces, generate_new_board
 from board import fen_to_board, board_to_fen
-from gamestate import random_move, game_over, generate_new_board, select_move
+from gamestate import random_move, game_over, select_move
+
+# Mst 1 File: Shows we can play random legal moves
 
 if __name__ == "__main__":
     pg.init()

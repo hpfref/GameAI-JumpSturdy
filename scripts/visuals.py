@@ -1,3 +1,8 @@
+### To import from src:
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
+###
 import numpy as np
 import pygame as pg
 from board import board_to_fen, fen_to_board
