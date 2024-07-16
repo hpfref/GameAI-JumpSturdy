@@ -8,7 +8,7 @@ def board_to_fen(board, player):
     the placement of pieces on the board, excluding special fields (corners in this case), and indicates the current player. 
 
     Args:
-        board (2D Array): !
+        board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
         player (str): A string indicating the current player ('b' for blue or 'r' for red).
 
     Returns:
@@ -22,44 +22,46 @@ def board_to_fen(board, player):
           where the board is described from the 8th row to the 1st row.
     """
     fen = ''
-    special_fields = [(0, 0), (0, 7), (7, 0), (7, 7)]  # Define the corners of the board as special fields to be excluded
-    for y in range(7, -1, -1):  # Iterate over rows in reverse order
-        empty_count = 0  # Initialize counter for consecutive empty spaces
-        row_fen = ''  # Initialize the FEN string for the current row
-        for x in range(8):  # Iterate over columns
-            if (x, y) in special_fields:  # Skip special fields (corners)
+    special_fields = [(0, 0), (0, 7), (7, 0), (7, 7)]  
+    for y in range(7, -1, -1):  
+        empty_count = 0  
+        row_fen = '' 
+        for x in range(8):  
+            if (x, y) in special_fields:  
                 continue
-            piece = board[y, x]  # Get the piece at the current position
-            if piece == "":  # If the space is empty
-                empty_count += 1  # Increment the counter for empty spaces
+            piece = board[y, x]  
+            if piece == "":  
+                empty_count += 1  
             else:
-                if empty_count > 0:  # If there were consecutive empty spaces before this piece
-                    row_fen += str(empty_count)  # Add the count of empty spaces to the row's FEN string
-                    empty_count = 0  # Reset the counter
-                # Add the piece notation to the row's FEN string ('b0' for blue, 'r0' for red)
+                if empty_count > 0: 
+                    row_fen += str(empty_count)  
+                    empty_count = 0  
                 if piece == 'b':
                     row_fen += 'b0'
                 elif piece == 'r':
                     row_fen += 'r0'
                 else:
-                    row_fen += piece  # Add custom piece notations if any
-        if empty_count > 0:  # If the row ends with consecutive empty spaces
-            row_fen += str(empty_count)  # Add the count of empty spaces to the row's FEN string
-        fen += row_fen  # Add the row's FEN string to the overall FEN notation
-        if y != 0:  # If this is not the last row
-            fen += '/'  # Add a slash to separate this row from the next
-    fen += ' ' + player  # Add the current player to the end of the FEN notation
+                    row_fen += piece  
+        if empty_count > 0:  
+            row_fen += str(empty_count)  
+        fen += row_fen  
+        if y != 0:  
+            fen += '/'  
+    fen += ' ' + player  
     return fen
 #walla
 def fen_to_board(fen):
-    """Translates the official FEN notation into our internal board representation (2D-numpy array)
+    """
+    Translates the official FEN notation into our internal 2D-numpy array board representation.
+    This function is designed to convert the string format into the current state of the board that represents 
+    the placement of pieces on the board, excluding special fields (corners in this case), and indicates the current player. 
 
     Args:
-        fen: [description]
+        str: A string representing the board state in FEN notation. The notation includes the arrangement of pieces on the board,
+             excluding the pieces on special fields (corners), followed by the current player ('b' or 'r').
 
     Returns:
-        board: [description]
-        player: [description]
+        board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
     """
     board = np.empty((8, 8), dtype='U10')
     special_fields = [(0, 0), (0, 7), (7, 0), (7, 7)]

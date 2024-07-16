@@ -10,8 +10,11 @@ import keras
 from tensorflow import keras
 
 
-
-# Leider nicht geeignet - uns fehlt Datenbasis 
+# Gab hier den kurzen Versuch einer Implementierung eines neuronalen Netzes, welches die Bewertungsfunktion approximieren soll
+# Für uns nicht geeignet und funktionsfähig, bei durch NN trainerten Schachengines wrd normalerweise als Output eine zu approximierende Bewertungsfunktion verwendet - typischerweise Stockfish 
+# Bei uns nicht anwendbar, da wir keine "richtige" Bewertungsfunktion zur Orientierung haben 
+# Reinforcement Learning wäre hier eine Möglichkeit, dabei müsste jedoch als Reward "Spiel gewonnen" benutzt werden, deswegen unglaubliche Menge an Spielen zum Training erforderlich 
+# - für uns nicht in der Zeit umsetzbar
 
 
 def parse_game_logs(game_logs):
@@ -127,12 +130,6 @@ model = tf.keras.models.Sequential([
 model.compile(optimizer=tf.keras.optimizers.Adam(), loss='mean_squared_error')
 
 model.fit(X, y, epochs=10, batch_size=32, validation_split=0.1)
-
-
-# OUTPUT WIE ZU INTERPRETIEREN?
-# : Epoch: Ein Durchlauf des Datasets
-# : loss: Der Fehler, den das Modell auf den Trainingsdaten gemacht hat
-# : val_loss: Der Fehler, den das Modell auf den Validierungsdaten gemacht hat - val loss ist inf, idk why 
 
 import os
 
