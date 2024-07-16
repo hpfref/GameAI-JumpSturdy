@@ -10,11 +10,11 @@ import keras
 from tensorflow import keras
 
 
-# Gab hier den kurzen Versuch einer Implementierung eines neuronalen Netzes, welches die Bewertungsfunktion approximieren soll
-# Für uns nicht geeignet und funktionsfähig, bei durch NN trainerten Schachengines wrd normalerweise als Output eine zu approximierende Bewertungsfunktion verwendet - typischerweise Stockfish 
-# Bei uns nicht anwendbar, da wir keine "richtige" Bewertungsfunktion zur Orientierung haben 
-# Reinforcement Learning wäre hier eine Möglichkeit, dabei müsste jedoch als Reward "Spiel gewonnen" benutzt werden, deswegen unglaubliche Menge an Spielen zum Training erforderlich 
-# - für uns nicht in der Zeit umsetzbar
+# This was a brief attempt at implementing a neural network to approximate the evaluation function
+# Not suitable and functional for us, as usually, chess engines trained by NN use an approximating evaluation function as the output - typically Stockfish
+# Not applicable for us, as we do not have a "correct" evaluation function for guidance
+# Reinforcement Learning could be an option here, but the reward would have to be "game won", hence an incredible amount of games would be required for training
+# - not feasible for us within the time frame
 
 
 def parse_game_logs(game_logs):
