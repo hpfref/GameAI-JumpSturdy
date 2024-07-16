@@ -1,3 +1,5 @@
+import math 
+
 def evaluate(board, player):
     # piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # dunno
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
@@ -271,3 +273,57 @@ def piece_under_attack_density(board, player):
     avg_distance_squared = total_distance_squared / (num_positions * (num_positions - 1) / 2) if num_positions > 1 else 0
 
     return under_attack, avg_distance_squared
+
+def evaluateFREFseite(board, player):
+    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
+    value = 0
+
+    # bonus for current player
+    if (player == 'b'):
+        value += 0.25
+    else:
+        value -= 0.25
+
+    # bonus positions
+    if board[(0, 2)] == 'r':
+        value -= 0.9
+
+    if board[(0, 5)] == 'r':
+        value -= 0.9
+
+    if board[(7, 2)] == 'b':
+        value += 0.9
+
+    if board[(7, 5)] == 'b':
+        value += 0.9
+
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in pieces:
+                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    return float('-inf')  # Red wins
+
+                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    return float('inf')  # Blue wins
+
+                if piece == 'r':
+                    value -= ((1.5 ** row) * 0.3) + 1 + math.log((col * row / 2) + 1)
+
+                elif piece == 'b':
+                    value += ((1.5 ** (7 - row)) * 0.3) + 1 + math.log((col * row / 2) + 1)
+
+                elif piece == 'rr':
+                    value -= ((1.5 ** row) * 0.4) + 2 + math.log((col * row / 2) + 1)
+
+                elif piece == 'bb':
+                    value += ((1.5 ** (7 - row)) * 0.4) + 2 + math.log((col * row / 2) + 1)
+
+                elif piece == 'br':
+                    value -= ((1.5 ** row) * 0.2) + 0 + math.log((col * row / 2) + 1)
+
+                elif piece == 'rb':
+                    value += ((1.5 ** (7 - row)) * 0.2) + 0 + math.log((col * row / 2) + 1)
+    return value

@@ -69,8 +69,7 @@ def check_gamestate(board):
     
     The midgame phase is considered to have started once at least 8 pieces have been beaten.
     The lategame phase is considered to have started once at least 14 pieces have been beaten.
-    This includes both single and promoted pieces. Promoted pieces are counted as two pieces since they represent
-    a piece that has reached the opponent's end of the board and returned.
+    This includes both single and promoted pieces. 
     
     Parameters:
     - board (2D Array): A 2D Array representing our game board.
@@ -83,6 +82,7 @@ def check_gamestate(board):
     initial_piece_count = 24  # The total number of pieces at the start of the game (12 red and 12 blue)
     current_piece_count = 0  # Initialize the current piece count
     
+    # Iterate through the board to count the pieces
     for row in board:
         for piece in row:
             if piece in ['r', 'b']:
@@ -90,6 +90,7 @@ def check_gamestate(board):
             elif piece in ['rr', 'br', 'bb', 'rb']:
                 current_piece_count += 2
     
+    # Calculate the number of pieces beaten
     pieces_beaten = initial_piece_count - current_piece_count
 
     if pieces_beaten >= 14:
@@ -123,17 +124,32 @@ def evalDynamic(board, player):
 
 
 
-##### RUHESUCHE
+
 # would be very good to inspect check moves too here, but finding check moves would be another big overhead (prob in legal_moves())
 
-#changes: legal_moves returns, quiescence_search methode, check in alpha beta, neuer alpha beta parameter
 
 def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
+    """
+    The function iterates through capture moves to simulate scenarios where captures are made. It stops when no further
+    captures are possible (the position is "quiet"), ensuring that the evaluation does not suffer from the horizon effect,
+    where a significant change is just outside the search depth. The function returns the dynamic evaluation of the board
+    state after considering these captures, along with the count of nodes explored, providing insight into the search's depth.
+    
+    Parameters:
+    - board_alpha_beta (2D-Array): The current board state to evaluate.
+    - player (str): The current player making the move.
+    - stack_capture (list): A list of stack capture moves.
+    - single_capture (list): A list of single capture moves.
+    
+    Returns:
+    - Evaluation: The evaluation of the board considering only capture moves and the number of nodes explored during the search.
+    
+    """
     nodes_explored = 0
     board = board_alpaha_beta.copy() #so i dont need to unmake moves afterwards
     capture_moves = single_capture + stack_capture
     current_player = player
-    max_depth = 6 # is tipically less than that
+    max_depth = 6 # is typically less than that
     curr_depth = 1
 
     while curr_depth <= max_depth:
@@ -189,7 +205,7 @@ def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
 
         if is_quiescent: #check if capture possible, if not break the lopp
             break
-        #print(len(capture_moves)) # tipically 1-3 moves possible
+        #print(len(capture_moves)) # typically 1-3 moves possible
 
         curr_depth+=1
         
@@ -198,6 +214,17 @@ def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
 
 
 def load_opening_book():
+    """
+    Loads the opening book from a JSON file named 'book.json'.
+    The opening book contains predefined game opening moves.
+    
+    Parameters:
+        None
+    
+    Returns:
+        dict: A dictionary representing the opening book loaded from 'book.json'.
+              Returns None if the file does not exist or an error occurs during file reading.
+    """
     try:
         # Construct the full path to 'book.json'
         base_dir = os.path.dirname(__file__)  # Gets the directory where the script is located
@@ -214,6 +241,25 @@ opening_book = load_opening_book()
 ##### MAIN ALPHA BETA 
 
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time, tt, zobrist_hash):
+    """
+    Description:
+    Performs the Alpha-Beta pruning algorithm on the game tree. It is used here to find the best move for the given game state.
+    
+    Parameters:
+        - board (2D-Array): The game board as a 2D-Array.
+        - player (string): The current player (r or b).
+        - depth (int): The current depth of the search.
+        - alpha (float): The best already explored option along the path to the root for the maximizer.
+        - beta (float): The best already explored option along the path to the root for the minimizer.
+        - maximizing_player (bool): True if the current player is the maximizing player, else False.
+        - start_time (float): The start time of the search to keep track of the elapsed time.
+        - max_time (float): The maximum time allowed for the search.
+        - tt (TranspositionTable): The transposition table for storing already evaluated positions.
+        - zobrist_hash (int): The Zobrist hash of the current board state.
+    
+    Returns:
+        tuple: A tuple containing the evaluation of the best move, the best move itself, a boolean indicating if the search was completed, and the number of nodes explored.
+    """
     if time.time() - start_time > max_time:
         return None, None, False, 0  
     nodes_explored = 1 # 1 für aktuelles board
@@ -239,7 +285,6 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         eval = evalDynamic(board,player)
         tt.store(zobrist_hash, depth, eval, EXACT, None)
         return eval, None, True, nodes_explored
-        #return evalDynamic(board,player), None, True, nodes_explored 
     
     global current_iterative_max_depth # too expensive to do for depths 1,2,3
 
@@ -288,7 +333,6 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             alpha = max(alpha, eval)
             if beta <= alpha:  
                 break
-            #print(f"Time elapsed for move {move}: {time.time() - start_time}")
         if best_move == None:
             best_move = moves[0]
         tt.store(zobrist_hash, depth, max_eval, LOWERBOUND if alpha >= beta else EXACT, best_move)
@@ -320,6 +364,24 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
 current_iterative_max_depth = 1
 
 def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player, tt, zobrist_hash):
+    """
+    Description:
+    Performs iterative deepening on the alpha-beta search algorithm. This method iteratively deepens the search depth, starting from depth 1 up to the specified max_depth, 
+    or until the allocated time (max_time) is exhausted. It uses alpha-beta pruning to efficiently explore the game tree. 
+    The method aims to find the best move within the given time constraint, adjusting the depth of search dynamically based on the time taken for each iteration.
+
+    Parameters:
+        - board (2D-Array): The game board as a 2D-Array.
+        - player (str): The current player (r or b).
+        - max_time (float): The maximum time allowed for the search in seconds.
+        - max_depth (int): The maximum depth to which the search should be performed.
+        - maximizing_player (bool): True if the current player is the maximizing player, else False.
+        - tt (TranspositionTable): The transposition table for storing already evaluated positions.
+        - zobrist_hash (int): The Zobrist hash of the current board state.
+
+    Returns:
+        tuple: A tuple containing the best move found within the time limit, the depth reached during the search, and the total number of nodes explored.
+    """
     start_time = time.time()
     depth = 1
     best_move = None
@@ -333,8 +395,6 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         fen = board_to_fen(board, player)
         if fen in opening_book:
             best_move = ast.literal_eval(opening_book[fen])
-            print(best_move)
-            print("Move from opening Book")
             break
     
         alpha = best_value - aspiration_window
@@ -347,16 +407,12 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         depth_start_time = time.time()
         value, move, completed, nodes_explored = alpha_beta_search(board, player, depth, float('-inf'), float('inf'),
                                                                    maximizing_player, start_time, max_time, tt, zobrist_hash)
-        # if completed:
-        # print(f"Search completed for depth {depth}. Best move: {move}")
         depth_end_time = time.time()
         depth_time = depth_end_time - depth_start_time
         total_nodes_explored += nodes_explored
 
-
         if not completed:
             break
-
 
         if value <= alpha:
             # Research with a larger window
@@ -379,7 +435,6 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
             if not completed:
                 break
 
-
         best_value = value
         best_move = move
         if (maximizing_player and best_value == float('inf')) or (not maximizing_player and best_value == float('-inf')):
@@ -397,19 +452,30 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
             print(f"Skipping depth {depth+1} as estimated time {next_depth_time} is greater than remaining time {remaining_time}")
             depth += 1
             break
-
         depth += 1
-        #print(f"Incremented depth: {depth}")
 
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
-    #print(f"Decremented depth: {depth-1}")
     return best_move, depth-1, total_nodes_explored
 
 total_game_time = 120  # Total game time in s
 
 def select_move(fen,remaining_time):
+    """
+    Description:
+        Selects the best move for the current player based on the given FEN string and remaining time. 
+        It uses the iterative deepening alpha-beta search algorithm, adjusting the search depth dynamically based on the remaining time and a Gaussian function 
+        to optimize time management throughout the game. The function aims to maximize the efficiency of the search within the time constraints, 
+        ensuring that the best possible move is chosen within the allocated time.
+
+    Parameters:
+        - fen (str): The FEN string representing the current game state. move
+        - remaining_time (int): The remaining time for the current player in milliseconds.
+
+    Returns:
+        Tuple: The best move determined by the iterative deepening alpha-beta search, formatted as a tuple (e.g., "((2,2), (4,2))").
+    """
     global total_game_time
-    remaining_time = remaining_time / 1000 # keine lust time management auf ms umzubauen
+    remaining_time = remaining_time / 1000 
 
     #remaining_time = 1000000 # for testing!
     #total_game_time = 1000000 # for testing!
@@ -423,11 +489,9 @@ def select_move(fen,remaining_time):
     while remaining_time > 0:
         start_time = time.time()
         position = 1 - remaining_time / total_game_time  
-        # Gaussfunktion 🤯
-        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87 # factor for time in current round
+        factor = math.exp(-((position - 0.5) ** 2) / (2 * 1 ** 2)) - 0.87 # factor for time in current round, based on Gaussian function
         print(factor)
         max_time = max(remaining_time * factor, 0.5)
-        #print(max_time)
         best_move, searched_depth, nodes_explored = iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, maximizing_player, tt, zobrist_hash)
         end_time = time.time()
         move_time = end_time - start_time  
@@ -726,58 +790,3 @@ def quiescence_search2(board_alpaha_beta, player, stack_capture, single_capture)
         
     
     return evalDynamic(board, current_player), nodes_explored
-
-
-def evaluateFREFseite(board, player):
-    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
-    value = 0
-
-    # bonus for current player
-    if (player == 'b'):
-        value += 0.25
-    else:
-        value -= 0.25
-
-    # bonus positions
-    if board[(0, 2)] == 'r':
-        value -= 0.9
-
-    if board[(0, 5)] == 'r':
-        value -= 0.9
-
-    if board[(7, 2)] == 'b':
-        value += 0.9
-
-    if board[(7, 5)] == 'b':
-        value += 0.9
-
-    for row in range(8):
-        for col in range(8):
-            piece = board[row, col]
-            if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
-                if row == 7 and piece in ['r', 'rr', 'br']:
-                    return float('-inf')  # Red wins
-
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
-                if row == 0 and piece in ['b', 'bb', 'rb']:
-                    return float('inf')  # Blue wins
-
-                if piece == 'r':
-                    value -= ((1.5 ** row) * 0.3) + 1 + math.log((col * row / 2) + 1)
-
-                elif piece == 'b':
-                    value += ((1.5 ** (7 - row)) * 0.3) + 1 + math.log((col * row / 2) + 1)
-
-                elif piece == 'rr':
-                    value -= ((1.5 ** row) * 0.4) + 2 + math.log((col * row / 2) + 1)
-
-                elif piece == 'bb':
-                    value += ((1.5 ** (7 - row)) * 0.4) + 2 + math.log((col * row / 2) + 1)
-
-                elif piece == 'br':
-                    value -= ((1.5 ** row) * 0.2) + 0 + math.log((col * row / 2) + 1)
-
-                elif piece == 'rb':
-                    value += ((1.5 ** (7 - row)) * 0.2) + 0 + math.log((col * row / 2) + 1)
-    return value
