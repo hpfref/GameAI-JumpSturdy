@@ -1,0 +1,124 @@
+P2 connected 
+Time remaining active player: 118599
+b0b0b0b0b0b0/1b0b0b0b01b01/5b02/8/8/1r06/2r0r0r0r0r01/r0r0r0r0r0r0 r
+F2-F3
+Time remaining active player: 116945
+b0b0b0b0b0b0/1b0b0b02b01/4b0b02/8/8/1r0r05/3r0r0r0r01/r0r0r0r0r0r0 r
+E2-E3
+Time remaining active player: 115130
+b0b0b0b0b0b0/1b0b0b02b01/4b03/5b02/1r06/2r05/3r0r0r0r01/r0r0r0r0r0r0 r
+F3-F4
+Time remaining active player: 111814
+b0b0b0b0b0b0/2b0b02b01/1b02b03/5b02/1r06/2r0r04/4r0r0r01/r0r0r0r0r0r0 r
+B2-B3
+Time remaining active player: 107224
+b0b0b0b0b0b0/2b0b02b01/1b02b03/6b01/1r06/2r0r0r03/5r0r01/r0r0r0r0r0r0 r
+F4-G4
+Time remaining active player: 102489
+b0b0b0b0b0b0/2b0b02b01/1b02b03/8/1r04b01/2r0r0r0r02/6r01/r0r0r0r0r0r0 r
+G4-G5
+Time remaining active player: 99646
+b0b0b0b0b0b0/2b03b01/1b01b0b03/8/1r04r01/2r0r0r03/6r01/r0r0r0r0r0r0 r
+D2-D3
+Time remaining active player: 92860
+b0b0b0b0b0b0/2b05/1b01b0b01b01/8/1r04r01/2r0r0r03/6rr1/r0r0r0r0r01 r
+G2-G3
+Time remaining active player: 88015
+b0b0b0b0b0b0/2b05/1b01b0b02b0/8/1r03r0r01/2r0r0r03/6r01/r0r0r0r0r01 r
+G3-H3
+Time remaining active player: 85140
+1b0b0b0b0b0/1b0b05/1b01b0b02b0/8/1r0r02r0r01/3r0r03/6r01/r0r0r0r0r01 r
+B1-B2
+Time remaining active player: 82432
+1b0b0b0b0b0/2b05/1bb1b0b02b0/8/1r0r02r0r01/3r0r01r01/8/r0r0r0r0r01 r
+B2-B3
+Time remaining active player: 76248
+1b0b0b0b0b0/2b05/1b01b0b02b0/8/1r0b02r0r01/3r0r01r01/1r06/1r0r0r0r01 r
+B3-C5
+Time remaining active player: 67023
+1b0b0b0b0b0/2b05/1b01bb3b0/8/1r0r02r0r01/4r01r01/1r06/1r0r0r0r01 r
+E3-D3
+Time remaining active player: 62128
+1b0b0b0b0b0/2b05/1b01b03b0/8/1rrb02r0r01/4r01r01/1r06/1r0r0r0r01 r
+D3-C5
+Time remaining active player: 54059
+1b0b0b0b0b0/2b05/r0b05b0/3b04/1r0b02r0r01/4r01r01/1r06/1r0r0r0r01 r
+D3-D4
+Time remaining active player: 52380
+1b0b0b0b0b0/r01b05/7b0/1b01b04/1r0b02r0r01/4r01r01/1r06/1r0r0r0r01 r
+B3-B4
+Time remaining active player: 50868
+1b0b0b0b0b0/r07/2b04b0/1b01b04/1r0b02r0r01/4r01r01/1r02r03/1r0r01r01 r
+C2-C3
+Time remaining active player: 49044
+1b0b0b0b01/r05b01/2b04b0/1b01b01r02/1r0b03r01/4r01r01/1r02r03/1r0r01r01 r
+G1-G2
+Time remaining active player: 45656
+1b0b0b0b01/r05b01/2b04b0/1b03r02/1r0b0b02r01/3r02r01/1r02r03/1r0r01r01 r
+D4-D5
+Time remaining active player: 43604
+1b0b0b0b01/r05b01/2b04b0/1b03r02/1r01b02r01/3b02r01/1r01r0r03/1r02r01 r
+C5-D6
+Time remaining active player: 41485
+1b0b0b0b01/r05b01/2b04b0/1b03r02/1r0b03r01/3r02r01/1r01r04/1r02r01 r
+D5-C5
+Time remaining active player: 40312
+1b0b0b0b01/r05b01/2b04b0/1b03r02/1r01b02r01/3r02r01/1r02r03/1r02r01 r
+C5-D5
+Time remaining active player: 38630
+1b0b0b0b01/r05b01/2b04b0/1b03r02/1r04r01/2b03r01/1r02r03/1r02r01 r
+D5-C6
+Time remaining active player: 37605
+1b0b0b0b01/r05b01/1b05b0/1b03r02/1r04r01/2r03r01/4r03/1r02r01 r
+C3-B3
+Time remaining active player: 34649
+1b0b0b0b01/r05b01/1b05b0/b04r02/1r04r01/2r01r01r01/8/1r02r01 r
+B4-A4
+Time remaining active player: 32939
+1b0b0b0b01/r05b01/1b05b0/5r02/b0r02r01r01/2r03r01/8/1r02r01 r
+A4-A5
+Time remaining active player: 31428
+1b0b0b0b01/r05b01/1b05b0/1r03r02/4r01r01/b01r03r01/8/1r02r01 r
+A5-A6
+Time remaining active player: 28528
+1b0b01b01/r03b01b01/1b05b0/1r03r02/4r01r01/b01r03r01/8/r03r01 r
+E1-E2
+Time remaining active player: 26619
+1b0b01b01/r03b01b01/1b05b0/1r03r02/4r01r01/2r03r01/b07/1r02r01 r
+A6-A7
+Time remaining active player: 25414
+1b0b01b01/r05b01/1b03b01b0/1r06/4r01r01/2r03r01/b07/1r02r01 r
+E2-F3
+Time remaining active player: 24510
+1b0b01b01/r05b01/5b01b0/2b05/4r01r01/2r03r01/b07/1r02r01 r
+B3-C4
+Time remaining active player: 23760
+1b0b01b01/r05b01/5b01b0/8/3b02r01/2r03r01/b07/1r02r01 r
+C4-D5
+Time remaining active player: 22507
+1b0b0b02/r05b01/5b01b0/8/3r02r01/6r01/b07/1r02r01 r
+F1-E1
+Time remaining active player: 21545
+1b0b03/r03b01b01/5b01b0/8/3r02rr1/8/b07/1r02r01 r
+E1-E2
+Time remaining active player: 20802
+1b0b03/r03b01b01/5b0b01/3r04/6rr1/8/b07/1r02r01 r
+H3-G3
+Time remaining active player: 20376
+1b0b03/r03b03/5b0b01/3r04/6r01/8/b07/1r02r01 r
+G2-F3
+Time remaining active player: 19522
+1b0b03/r03b03/5bb2/2r05/6r01/8/b07/1r02r01 r
+G3-F3
+Time remaining active player: 19174
+1b0b03/r03b03/5b02/2r0b02r01/8/8/b07/1r02r01 r
+F3-D4
+Time remaining active player: 18317
+1b0b03/r03b03/5b0r01/2r0b04/8/8/1b06/1r02r01 r
+A7-B7
+Time remaining active player: 17523
+1b0b03/r03b03/5b0r01/2r05/3b04/8/1r06/4r01 r
+D4-D5
+Time remaining active player: 17174
+1b0b03/r03b01r01/5b02/2r05/8/3b04/1r06/4r01 r
+D5-D6

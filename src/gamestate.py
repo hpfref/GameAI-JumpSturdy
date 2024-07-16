@@ -4,8 +4,8 @@ from move_gen import legal_moves
 from board import fen_to_board, board_to_fen
 import time
 import math
-
-
+import json
+import os
 from transposition_table import TranspositionTable, EXACT, UPPERBOUND, LOWERBOUND
 
 
@@ -132,7 +132,7 @@ def evaluate(board, player):
     return value
 
 
-def evaluateFREF(board, player):
+def evaluateEarlygame(board, player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -187,7 +187,7 @@ def evaluateFREF(board, player):
 
     return value
 
-def evaluateFREF2(board, player):
+def evaluateMidgame(board, player):
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -239,113 +239,118 @@ def evaluateFREF2(board, player):
 
                 elif piece == 'rb':
                     value += ((1.5 ** (7 - row)) * 0.3) + 0
-    density_bonus = piece_density(board)
+
+
+    under_attack_penalty, density_bonus = piece_under_attack_density(board, player)
+    value -= under_attack_penalty * 0.5
     value += density_bonus * 0.1  
-
-    under_attack_penalty = piece_under_attack(board, player)
-    value -= under_attack_penalty * 0.5  
     return value
 
-def piece_under_attack(board, player):
-    """Calculate how many friendly pieces are under attack based on the current board and player."""
-    enemy = 'b' if player == 'r' else 'r'  
-    attack_positions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]  
-    amount = 0
+def evaluateLategame(board, player):
+    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
+    value = 0
+
+    # bonus for current player
+    if (player == 'b'):
+        value += 0.25
+    else:
+        value -= 0.25
+
+    # bonus positions
+    if board[(0, 2)] == 'r':
+        value -= 0.5
+
+    if board[(0, 5)] == 'r':
+        value -= 0.5
+
+    if board[(7, 2)] == 'b':
+        value += 0.5
+
+    if board[(7, 5)] == 'b':
+        value += 0.5
+
     for row in range(8):
         for col in range(8):
-            if board.get((row, col), '').startswith(player):  
-                for d_row, d_col in attack_positions:
-                    if 0 <= row + d_row < 8 and 0 <= col + d_col < 8:  
-                        if board.get((row + d_row, col + d_col), '').startswith(enemy):  
-                            amount += 1
-                            break  
-    return amount
+            piece = board[row, col]
+            if piece in pieces:
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    return float('-inf')  # Red wins
 
-def piece_density(board):
-    """Calculate the piece density of the board based on the current board structure."""
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    return float('inf')  # Blue wins
+
+                if piece == 'r':
+                    value -= ((1.5 ** row) * 0.3) + 1.25
+
+                elif piece == 'b':
+                    value += ((1.5 ** (7 - row)) * 0.3) + 1.25
+
+                elif piece == 'rr':
+                    value -= ((1.5 ** row) * 0.5) + 2.5
+
+                elif piece == 'bb':
+                    value += ((1.5 ** (7 - row)) * 0.5) + 2.5
+
+                elif piece == 'br':
+                    value -= ((1.5 ** row) * 0.3) + 0
+
+                elif piece == 'rb':
+                    value += ((1.5 ** (7 - row)) * 0.3) + 0
+
+
+    under_attack_penalty, density_bonus = piece_under_attack_density(board, player)
+    value -= under_attack_penalty * 0.5
+    value += density_bonus * 0.1  
+    return value
+
+def piece_under_attack_density(board, player):
+    """Calculate both the number of friendly pieces under attack and the piece density in one pass."""
+    enemy = 'b' if player == 'r' else 'r'
+    attack_positions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]
+    under_attack = 0
     positions = []
-    total_distance = 0
+    total_distance_squared = 0
+    board_size = len(board)
+    row_size = len(board[0]) if board_size > 0 else 0
 
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] != '':  
-                positions.append((col, row))
+    # Iterate through the board once
+    for row in range(board_size):
+        for col in range(row_size):
+            current_piece = board[row][col]
+            if current_piece == '':
+                continue
+            positions.append((col, row))
+            if current_piece.startswith(player):
+                for d_row, d_col in attack_positions:
+                    adj_row, adj_col = row + d_row, col + d_col
+                    if 0 <= adj_row < board_size and 0 <= adj_col < row_size:
+                        adjacent_piece = board[adj_row][adj_col]
+                        if adjacent_piece.startswith(enemy):
+                            under_attack += 1
+                            break
 
-    for i in range(len(positions)):
-        for j in range(i + 1, len(positions)):
+    num_positions = len(positions)
+    for i in range(num_positions):
+        for j in range(i + 1, num_positions):
             x1, y1 = positions[i]
             x2, y2 = positions[j]
-            distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            total_distance += distance
+            distance_squared = (x2 - x1) ** 2 + (y2 - y1) ** 2
+            total_distance_squared += distance_squared
 
-    if len(positions) == 0:
-        return 0
-    avg_distance = total_distance / len(positions)
+    avg_distance_squared = total_distance_squared / (num_positions * (num_positions - 1) / 2) if num_positions > 1 else 0
 
-    return avg_distance
+    return under_attack, avg_distance_squared
 
 
 
-def evaluateFREFseite(board, player):
-    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
-    value = 0
 
-    # bonus for current player
-    if (player == 'b'):
-        value += 0.25
-    else:
-        value -= 0.25
 
-    # bonus positions
-    if board[(0, 2)] == 'r':
-        value -= 0.9
-
-    if board[(0, 5)] == 'r':
-        value -= 0.9
-
-    if board[(7, 2)] == 'b':
-        value += 0.9
-
-    if board[(7, 5)] == 'b':
-        value += 0.9
-
-    for row in range(8):
-        for col in range(8):
-            piece = board[row, col]
-            if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
-                if row == 7 and piece in ['r', 'rr', 'br']:
-                    return float('-inf')  # Red wins
-
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
-                if row == 0 and piece in ['b', 'bb', 'rb']:
-                    return float('inf')  # Blue wins
-
-                if piece == 'r':
-                    value -= ((1.5 ** row) * 0.3) + 1 + math.log((col * row / 2) + 1)
-
-                elif piece == 'b':
-                    value += ((1.5 ** (7 - row)) * 0.3) + 1 + math.log((col * row / 2) + 1)
-
-                elif piece == 'rr':
-                    value -= ((1.5 ** row) * 0.4) + 2 + math.log((col * row / 2) + 1)
-
-                elif piece == 'bb':
-                    value += ((1.5 ** (7 - row)) * 0.4) + 2 + math.log((col * row / 2) + 1)
-
-                elif piece == 'br':
-                    value -= ((1.5 ** row) * 0.2) + 0 + math.log((col * row / 2) + 1)
-
-                elif piece == 'rb':
-                    value += ((1.5 ** (7 - row)) * 0.2) + 0 + math.log((col * row / 2) + 1)
-
-    return value
-
-def check_midgame(board):
+def check_gamestate(board):
     """
-    Determines if the game has reached the midgame phase based on the number of pieces beaten.
+    Determines the current game phase based on the number of pieces beaten.
     
-    The midgame phase is considered to have started once at least 10 pieces have been beaten (removed from the board).
+    The midgame phase is considered to have started once at least 8 pieces have been beaten.
+    The lategame phase is considered to have started once at least 14 pieces have been beaten.
     This includes both single and promoted pieces. Promoted pieces are counted as two pieces since they represent
     a piece that has reached the opponent's end of the board and returned.
     
@@ -353,7 +358,8 @@ def check_midgame(board):
     - board (2D Array): A 2D Array representing our game board.
 
     Returns:
-    - bool: True if at least 10 pieces have been beaten (indicating the start of the midgame phase), False otherwise.
+    - str: "midgame" if at least 8 pieces have been beaten, "lategame" if 14 or more pieces have been beaten, 
+           otherwise "earlygame".
     """
     
     initial_piece_count = 24  # The total number of pieces at the start of the game (12 red and 12 blue)
@@ -368,14 +374,34 @@ def check_midgame(board):
     
     pieces_beaten = (initial_piece_count * 2) - current_piece_count
 
-    return pieces_beaten >= 10
+    if pieces_beaten >= 14:
+        return "lategame"
+    elif pieces_beaten >= 8:
+        return "midgame"
+    else:
+        return "earlygame"
+
+
 
 def evalDynamic(board, player):
-    isMidgame = check_midgame(board)
-    if isMidgame:
-        return evaluateFREFseite(board, player)
-    else:
-        return evaluateFREF(board, player)
+    """
+    Evaluates the board dynamically based on the current game phase.
+    
+    Parameters:
+    - board (2D Array): The game board.
+    - player (str): The current player ('r' for red, 'b' for blue).
+    
+    Returns:
+    - Function: The evaluation function appropriate for the current game phase.
+    """
+    game_phase = check_gamestate(board)
+    
+    if game_phase == "midgame":
+        return evaluateMidgame(board, player)
+    elif game_phase == "lategame":
+        return evaluateLategame(board, player)
+    else:  
+       return evaluateEarlygame(board, player)
 
 
 def make_move(board, player, move, start_value, target_value):
@@ -467,7 +493,6 @@ def unmake_move(board, move, start_value, target_value):
 def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
     nodes_explored = 0
     board = board_alpaha_beta.copy() #so i dont need to unmake moves afterwards
-
     capture_moves = single_capture + stack_capture
     current_player = player
     max_depth = 6 # is tipically less than that
@@ -486,7 +511,7 @@ def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
                 start_value = board[move[0]]
                 target_value = board[move[1]]
                 make_move(board, current_player, move, start_value, target_value)
-                eval_i = evaluateFREF(board,'r') 
+                eval_i = evalDynamic(board,'r') 
                 if eval_i > best_eval:
                     best_eval = eval_i 
                     best_move = move
@@ -509,11 +534,11 @@ def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
                 start_value = board[move[0]]
                 target_value = board[move[1]]
                 make_move(board, current_player, move, start_value, target_value)
-                eval_i = evaluateFREF(board,'b') 
+                eval_i = evalDynamic(board,'b') 
                 if eval_i < best_eval:
                     best_eval = eval_i 
                     best_move = move
-                unmake_move(board, move, start_value, target_value)
+                unmake_move(board, move, start_value, target_value) 
             
             #play the move
             start_value = board[best_move[0]]
@@ -531,7 +556,22 @@ def quiescence_search(board_alpaha_beta, player, stack_capture, single_capture):
         curr_depth+=1
         
     
-    return evaluateFREF(board, current_player), nodes_explored
+    return evalDynamic(board, current_player), nodes_explored
+
+
+def load_opening_book():
+    try:
+        # Construct the full path to 'book.json'
+        base_dir = os.path.dirname(__file__)  # Gets the directory where the script is located
+        file_path = os.path.join(base_dir, 'book.json')  # Constructs the full path to 'book.json'
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print(f"Error: 'book.json' file not found in {base_dir}. Please check the file path.")
+        return None
+opening_book = load_opening_book()
+
+
 
 ##### MAIN ALPHA BETA 
 
@@ -540,6 +580,12 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
         return None, None, False, 0  
     nodes_explored = 1 # 1 für aktuelles board
 
+
+    fen = board_to_fen(board, player)
+    if fen in opening_book:
+        best_move = opening_book[fen]
+        return 0, best_move, True, nodes_explored   
+    
     tt_entry = tt.lookup(zobrist_hash)
     if tt_entry:
         tt_depth, tt_value, tt_flag, tt_best_move = tt_entry[0]
@@ -556,7 +602,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if not moves or game_over(board, player): # or depth==0 jetzt in ruhesuche
-        eval = evaluateFREF(board,player)
+        eval = evalDynamic(board,player)
         tt.store(zobrist_hash, depth, eval, EXACT, None)
         return eval, None, True, nodes_explored
         #return evalDynamic(board,player), None, True, nodes_explored 
@@ -587,7 +633,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
                     return eval_quiescence, None, True, nodes_explored
 
         else: # wenn es keine Schlagzüge gibt, also situation 'ruhig' ist
-            return evaluateFREF(board,player), None, True, nodes_explored
+            return evalDynamic(board,player), None, True, nodes_explored
     
     if maximizing_player:
         max_eval = float('-inf')
@@ -777,7 +823,7 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
     if not moves or game_over(board, player): # or depth==0 jetzt in ruhesuche
-        eval = evaluateFREF2(board,player)
+        eval = evalDynamic(board,player)
         tt.store(zobrist_hash, depth, eval, EXACT, None)
         return eval, None, True, nodes_explored
         #return evalDynamic(board,player), None, True, nodes_explored 
@@ -808,7 +854,7 @@ def alpha_beta_searchTEST(board, player, depth, alpha, beta, maximizing_player, 
                     return eval_quiescence, None, True, nodes_explored
 
         else: # wenn es keine Schlagzüge gibt, also situation 'ruhig' ist
-            return evaluateFREF2(board,player), None, True, nodes_explored
+            return evalDynamic(board,player), None, True, nodes_explored
     
     if maximizing_player:
         max_eval = float('-inf')
@@ -993,7 +1039,7 @@ def quiescence_search2(board_alpaha_beta, player, stack_capture, single_capture)
                 start_value = board[move[0]]
                 target_value = board[move[1]]
                 make_move(board, current_player, move, start_value, target_value)
-                eval_i = evaluateFREF2(board,'r') 
+                eval_i = evalDynamic(board,'r') 
                 if eval_i > best_eval:
                     best_eval = eval_i 
                     best_move = move
@@ -1016,7 +1062,7 @@ def quiescence_search2(board_alpaha_beta, player, stack_capture, single_capture)
                 start_value = board[move[0]]
                 target_value = board[move[1]]
                 make_move(board, current_player, move, start_value, target_value)
-                eval_i = evaluateFREF2(board,'b') 
+                eval_i = evalDynamic(board,'b') 
                 if eval_i < best_eval:
                     best_eval = eval_i 
                     best_move = move
@@ -1038,4 +1084,59 @@ def quiescence_search2(board_alpaha_beta, player, stack_capture, single_capture)
         curr_depth+=1
         
     
-    return evaluateFREF2(board, current_player), nodes_explored
+    return evalDynamic(board, current_player), nodes_explored
+
+
+def evaluateFREFseite(board, player):
+    pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
+    value = 0
+
+    # bonus for current player
+    if (player == 'b'):
+        value += 0.25
+    else:
+        value -= 0.25
+
+    # bonus positions
+    if board[(0, 2)] == 'r':
+        value -= 0.9
+
+    if board[(0, 5)] == 'r':
+        value -= 0.9
+
+    if board[(7, 2)] == 'b':
+        value += 0.9
+
+    if board[(7, 5)] == 'b':
+        value += 0.9
+
+    for row in range(8):
+        for col in range(8):
+            piece = board[row, col]
+            if piece in pieces:
+                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                if row == 7 and piece in ['r', 'rr', 'br']:
+                    return float('-inf')  # Red wins
+
+                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                if row == 0 and piece in ['b', 'bb', 'rb']:
+                    return float('inf')  # Blue wins
+
+                if piece == 'r':
+                    value -= ((1.5 ** row) * 0.3) + 1 + math.log((col * row / 2) + 1)
+
+                elif piece == 'b':
+                    value += ((1.5 ** (7 - row)) * 0.3) + 1 + math.log((col * row / 2) + 1)
+
+                elif piece == 'rr':
+                    value -= ((1.5 ** row) * 0.4) + 2 + math.log((col * row / 2) + 1)
+
+                elif piece == 'bb':
+                    value += ((1.5 ** (7 - row)) * 0.4) + 2 + math.log((col * row / 2) + 1)
+
+                elif piece == 'br':
+                    value -= ((1.5 ** row) * 0.2) + 0 + math.log((col * row / 2) + 1)
+
+                elif piece == 'rb':
+                    value += ((1.5 ** (7 - row)) * 0.2) + 0 + math.log((col * row / 2) + 1)
+    return value
