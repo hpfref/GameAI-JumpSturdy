@@ -584,6 +584,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     fen = board_to_fen(board, player)
     if fen in opening_book:
         best_move = opening_book[fen]
+        print("Move from opening Book")
         return 0, best_move, True, nodes_explored   
     
     tt_entry = tt.lookup(zobrist_hash)
