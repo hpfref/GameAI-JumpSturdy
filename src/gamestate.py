@@ -372,7 +372,7 @@ def check_gamestate(board):
             elif piece in ['rr', 'br', 'bb', 'rb']:
                 current_piece_count += 2
     
-    pieces_beaten = (initial_piece_count * 2) - current_piece_count
+    pieces_beaten = initial_piece_count - current_piece_count
 
     if pieces_beaten >= 14:
         return "lategame"

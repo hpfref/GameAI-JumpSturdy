@@ -30,15 +30,15 @@ def test_search_algorithms(fen, select_move, select_min_max_move):
     #print(f"Alpha-Beta Best Move: {best_move_ab}, Runtime: {runtime_ab:.4f} seconds")
 
     # Test Min-Max Search
-    print("Testing Min-Max Search")
-    best_move_mm, runtime_mm = test_function_runtime(select_min_max_move, fen)
+    #print("Testing Min-Max Search")
+    #best_move_mm, runtime_mm = test_function_runtime(select_min_max_move, fen)
     #
-    time_total_mm = timeit.repeat("select_min_max_move(fen)", globals=locals(), number=1, repeat=10)
-    time_avg_mm = sum(time_total_mm) / 10
-    print(f"Min-Max Best Move: {best_move_mm}, Average MinMax Runtime: {time_avg_mm} seconds")
+    #time_total_mm = timeit.repeat("select_min_max_move(fen)", globals=locals(), number=1, repeat=10)
+    #time_avg_mm = sum(time_total_mm) / 10
+    #print(f"Min-Max Best Move: {best_move_mm}, Average MinMax Runtime: {time_avg_mm} seconds")
     #print(f"Min-Max Best Move: {best_move_mm}, Runtime: {runtime_mm:.4f} seconds")
 
-    return best_move_ab, runtime_ab, best_move_mm, runtime_mm
+    return best_move_ab, runtime_ab#, best_move_mm, runtime_mm
 
 def test_alphabeta(fen, select_move):
     # Test Alpha-Beta Search6
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     #cProfile.run('test_search_algorithms(fen_mid, select_move, select_min_max_move)', 'time')
     profiler = cProfile.Profile()
     profiler.enable()
-    test_alphabeta(fen_mid, select_move)
+    test_alphabeta(fen_late, select_move)
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('tottime')
     stats.print_stats()
