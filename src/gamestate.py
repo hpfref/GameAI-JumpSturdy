@@ -7,7 +7,7 @@ import math
 import json
 import os
 from transposition_table import TranspositionTable, EXACT, UPPERBOUND, LOWERBOUND
-
+import ast
 
 
 def random_move(fen):
@@ -581,11 +581,6 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     nodes_explored = 1 # 1 für aktuelles board
 
 
-    fen = board_to_fen(board, player)
-    if fen in opening_book:
-        best_move = opening_book[fen]
-        print("Move from opening Book")
-        return 0, best_move, True, nodes_explored   
     
     tt_entry = tt.lookup(zobrist_hash)
     if tt_entry:
@@ -697,6 +692,13 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     while True:
         if depth > max_depth:
             break
+        fen = board_to_fen(board, player)
+        if fen in opening_book:
+            best_move = ast.literal_eval(opening_book[fen])
+            print(best_move)
+            print("Move from opening Book")
+            break
+    
         alpha = best_value - aspiration_window
         beta = best_value + aspiration_window
 
