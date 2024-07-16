@@ -788,3 +788,136 @@ def quiescence_search2(board_alpaha_beta, player, stack_capture, single_capture)
         
     
     return evalDynamic(board, current_player), nodes_explored
+
+
+# this is used in visuals.py; is a relict from when we didnt use make_move, unmake_move in alpha beta
+def generate_new_board(board, player, move):
+    from_pos, to_pos = move
+    new_board = board.copy()
+
+    if player == "b":
+        # Move logic for blue pieces
+        if new_board[to_pos] in ["", "r"]:
+            new_board[to_pos] = "b"
+        elif new_board[to_pos] == "rr":
+            new_board[to_pos] = "rb"
+        elif new_board[to_pos] in ["b", "br"]:
+            new_board[to_pos] = "bb"
+
+        # Clear the original position
+        if new_board[from_pos] == "b":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "bb":
+            new_board[from_pos] = "b"
+        elif new_board[from_pos] == "rb":
+            new_board[from_pos] = "r"
+
+    else:
+        # Move logic for red pieces
+        if new_board[to_pos] in ["", "b"]:
+            new_board[to_pos] = "r"
+        elif new_board[to_pos] == "bb":    
+            new_board[to_pos] = "br"
+        elif new_board[to_pos] in ["r", "rb"]:
+            new_board[to_pos] = "rr"
+
+        # Clear the original position
+        if new_board[from_pos] == "r":
+            new_board[from_pos] = ""
+        elif new_board[from_pos] == "rr":
+            new_board[from_pos] = "r"
+        elif new_board[from_pos] == "br":
+            new_board[from_pos] = "b"
+
+    # Switch the player
+    new_player = 'b' if player == 'r' else 'r'
+    return new_board, new_player
+
+
+################# MIN MAX ONLY FOR TESTING #################
+
+def min_max_search(board, player, depth, maximizing_player, start_time, max_time):
+    nodes_explored = 0
+
+    def min_max_recursive(board, player, depth, maximizing_player):
+        nonlocal nodes_explored
+        if time.time() - start_time > max_time:
+            return None, None, False  
+
+        if depth == 0 or game_over(board, player):
+            nodes_explored += 1
+            return evaluateEarlygame(board,player), None, True  
+
+        moves = legal_moves(board, player)[0]
+        if not moves:
+            nodes_explored += 1
+            return evaluateEarlygame(board,player), None, True  
+
+        nodes_explored += 1  
+
+        if maximizing_player:
+            max_eval = float('-inf')
+            best_move = None
+            for move in moves:
+                new_board, new_player = generate_new_board(board, player, move)
+                eval, _, completed = min_max_recursive(new_board, new_player, depth - 1, False)
+                if not completed:
+                    return None, None, False  
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = move
+            if best_move == None:
+                best_move = moves[0]
+            return max_eval, best_move, True  
+        else:
+            min_eval = float('inf')
+            best_move = None
+            for move in moves:
+                new_board, new_player = generate_new_board(board, player, move)
+                eval, _, completed = min_max_recursive(new_board, new_player, depth - 1, True)
+                if not completed:
+                    return None, None, False  
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = move
+            if best_move == None:
+                best_move = moves[0]
+            return min_eval, best_move, True  
+    
+    value, best_move, completed = min_max_recursive(board, player, depth, maximizing_player)
+    return value, best_move, completed, nodes_explored
+
+def iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player):
+    start_time = time.time()
+    depth = 1
+    best_move = None
+    best_value = float('-inf') if maximizing_player else float('inf')
+    total_nodes_explored = 0
+
+    while True:
+        if depth > max_depth:
+            break
+        print(f"Searching depth {depth}")
+        value, move, completed, nodes_explored = min_max_search(board, player, depth, maximizing_player, start_time, max_time)
+        total_nodes_explored += nodes_explored
+        if not completed :
+            break  
+        best_value = value
+        best_move = move
+        depth += 1
+
+        if (maximizing_player and best_value == float('inf')) or (
+                not maximizing_player and best_value == float('-inf')):
+            break
+
+    print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
+    return best_move, depth - 1, total_nodes_explored
+
+def select_min_max_move(fen):
+    max_time = 1000000  # Maximum time in seconds for each move
+    max_depth = 2  # for testing
+    board, player = fen_to_board(fen)
+    maximizing_player = player == 'b'
+    best_move, searched_depth, nodes_explored = iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player)
+    print(f"Best move: {best_move}, Depth: {searched_depth}, Nodes explored: {nodes_explored}")
+    return best_move

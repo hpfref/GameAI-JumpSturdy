@@ -7,7 +7,7 @@ import time
 import unittest
 import timeit
 from board import fen_to_board
-from move_selection import select_move, select_moveTEST
+from move_selection import select_move, select_min_max_move
 from evaluate import evaluate
 import cProfile
 import pstats
@@ -20,33 +20,24 @@ def test_function_runtime(func, *args, **kwargs):
     runtime = end_time - start_time
     return result, runtime
 
-def test_search_algorithms(fen, select_move, select_min_max_move):
-    # Test Alpha-Beta Search
-    print("Testing Alpha-Beta Search")
-    best_move_ab, runtime_ab = test_function_runtime(select_moveTEST, fen)
-    #
-    time_total_ab = timeit.repeat("select_move(fen)", globals=locals(), number=1, repeat=10)
-    time_avg_ab = sum(time_total_ab) / 10
-    print(f"Alpha-Beta Best Move: {best_move_ab}, Average Alpha-Beta Runtime: {time_avg_ab} seconds")
-    #print(f"Alpha-Beta Best Move: {best_move_ab}, Runtime: {runtime_ab:.4f} seconds")
-
+def test_minimax(fen, select_min_max_move):
     # Test Min-Max Search
-    #print("Testing Min-Max Search")
-    #best_move_mm, runtime_mm = test_function_runtime(select_min_max_move, fen)
-    #
-    #time_total_mm = timeit.repeat("select_min_max_move(fen)", globals=locals(), number=1, repeat=10)
-    #time_avg_mm = sum(time_total_mm) / 10
-    #print(f"Min-Max Best Move: {best_move_mm}, Average MinMax Runtime: {time_avg_mm} seconds")
+    print("Testing Min-Max Search")
+    best_move_mm, runtime_mm = test_function_runtime(select_min_max_move, fen)
+    
+    time_total_mm = timeit.repeat("select_min_max_move(fen)", globals=locals(), number=1, repeat=10)
+    time_avg_mm = sum(time_total_mm) / 10
+    print(f"Min-Max Best Move: {best_move_mm}, Average MinMax Runtime: {time_avg_mm} seconds")
     #print(f"Min-Max Best Move: {best_move_mm}, Runtime: {runtime_mm:.4f} seconds")
 
-    return best_move_ab, runtime_ab#, best_move_mm, runtime_mm
+    return best_move_mm, runtime_mm
 
 def test_alphabeta(fen, select_move):
     # Test Alpha-Beta Search6
     print("Testing Alpha-Beta Search")
-    best_move_ab, runtime_ab = test_function_runtime(select_move, fen, 120000)
+    best_move_ab, runtime_ab = test_function_runtime(select_move, fen, 100000)
     #
-    time_total_ab = timeit.repeat("select_move(fen, 120000)", globals=locals(), number=1, repeat=10)
+    time_total_ab = timeit.repeat("select_move(fen, 100000)", globals=locals(), number=1, repeat=10)
     time_avg_ab = sum(time_total_ab) / 10
     print(f"Alpha-Beta Best Move: {best_move_ab}, Average Alpha-Beta Runtime: {time_avg_ab} seconds")
     #print(f"Alpha-Beta Best Move: {best_move_ab}, Runtime: {runtime_ab:.4f} seconds")
@@ -70,16 +61,23 @@ if __name__ == "__main__":
     fen_late = "3b02/5r02/3r04/8/8/2b02b02/2r05/6 b"
     fen_o_late = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
     #cProfile.run('test_search_algorithms(fen_mid, select_move, select_min_max_move)', 'time')
+    
+    # alphabeta test
     profiler = cProfile.Profile()
     profiler.enable()
-    test_alphabeta(fen_late, select_move)
+    test_alphabeta(fen_mid, select_move)
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('tottime')
     stats.print_stats()
     
-    # alpha beta / minmax
-    #test_search_algorithms(fen_mid, select_move, select_min_max_move) #depends on max depth set in alphabeta / minmax func
+    # minimax test
+    #test_minimax(fen_start, select_min_max_move)
+    # NOTE: Benchmarking those results with the wiki doesn't work because groups don't have the exact same 
+    # amount of examined nodes and often don't even use the same boards.
+    # When comparing the numbers for the start_fen with other teams, the node counts are pretty close to each other.
+    # We believe that the differences might be due to erroneous node counting or move generators.
 
+    # evaluate test
     #reps = 1000
     #print("Average time early game (in ms):", test_evaluate(fen_early,reps,evaluate)*1000)
     #print("Average time mid game (in ms):", test_evaluate(fen_mid,reps,evaluate)*1000)

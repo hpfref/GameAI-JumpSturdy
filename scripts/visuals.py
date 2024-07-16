@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'src')))
 import numpy as np
 import pygame as pg
 from board import board_to_fen, fen_to_board
-from move_selection import game_over, select_move
+from move_selection import game_over, select_move, generate_new_board
 
 
 # THIS FILE IS FOR VISUAL REPRESENTATION OF A GAME(STATE) AND DOESN'T HAVE ANY FUNCTIONALITY FOR OUR AI
@@ -49,50 +49,6 @@ def draw_pieces(board, window, PIECES):
                 continue
             if piece:
                 window.blit(PIECES[piece], sq2xy((x, y)))
-
-# is a relict from when we didnt use make_move, unmake_move in alpha beta
-def generate_new_board(board, player, move):
-    from_pos, to_pos = move
-    new_board = board.copy()
-
-    if player == "b":
-        # Move logic for blue pieces
-        if new_board[to_pos] in ["", "r"]:
-            new_board[to_pos] = "b"
-        elif new_board[to_pos] == "rr":
-            new_board[to_pos] = "rb"
-        elif new_board[to_pos] in ["b", "br"]:
-            new_board[to_pos] = "bb"
-
-        # Clear the original position
-        if new_board[from_pos] == "b":
-            new_board[from_pos] = ""
-        elif new_board[from_pos] == "bb":
-            new_board[from_pos] = "b"
-        elif new_board[from_pos] == "rb":
-            new_board[from_pos] = "r"
-
-    else:
-        # Move logic for red pieces
-        if new_board[to_pos] in ["", "b"]:
-            new_board[to_pos] = "r"
-        elif new_board[to_pos] == "bb":    
-            new_board[to_pos] = "br"
-        elif new_board[to_pos] in ["r", "rb"]:
-            new_board[to_pos] = "rr"
-
-        # Clear the original position
-        if new_board[from_pos] == "r":
-            new_board[from_pos] = ""
-        elif new_board[from_pos] == "rr":
-            new_board[from_pos] = "r"
-        elif new_board[from_pos] == "br":
-            new_board[from_pos] = "b"
-
-    # Switch the player
-    new_player = 'b' if player == 'r' else 'r'
-    return new_board, new_player
-
 
 
 def simulate_game(fen_start, window, pieces, clock, fps=40,):
@@ -145,7 +101,7 @@ if __name__ == "__main__":
             else:
                 BOARD[y, x] = ""
 
-    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r'
+    fen = 'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b'
     fen1 = '3b02/2bb2b02/5b0bb1/2r0b04/2rb3b01/1rr1rr2r0r0/5r02/2rr3 b'
     fen2 = "b0b0b01bb1/2b0b0bbb02/5r02/3b04/4r0b02/8/2rrr01r02/r0r0r0r01r0 r"
     fen3 = "6/1bb1b02b01/8/2r05/3r01b02/5r0r02/2rr1r03/6 b"
