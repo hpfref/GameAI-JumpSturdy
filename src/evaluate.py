@@ -66,6 +66,18 @@ def evaluate(board, player):
 
 
 def evaluateEarlygame(board, player):
+    """
+    Evaluates the board state during the earlygamme phase for a given player, taking into account piece positions, 
+    and piece values. Puts emphasis on piece development.
+
+    Parameters:
+        - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+        - player (str): The current player ('b' for blue, 'r' for red) being evaluated.
+
+    Returns:
+        float: The evaluation score of the board state. A positive score favors the blue player, while a negative score favors the red player.
+               Returns float('inf') if the blue player wins, and float('-inf') if the red player wins.
+    """
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -121,6 +133,18 @@ def evaluateEarlygame(board, player):
     return value
 
 def evaluateMidgame(board, player):
+    """
+    Evaluates the board state during the midgame phase for a given player, taking into account piece positions, 
+    piece values, board control and piece density. 
+
+    Parameters:
+        - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+        - player (str): The current player ('b' for blue, 'r' for red) being evaluated.
+
+    Returns:
+        float: The evaluation score of the board state. A positive score favors the blue player, while a negative score favors the red player.
+               Returns float('inf') if the blue player wins, and float('-inf') if the red player wins.
+    """
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -180,6 +204,18 @@ def evaluateMidgame(board, player):
     return value
 
 def evaluateLategame(board, player):
+    """
+    Evaluates the board state during the lategame phase for a given player, taking into account piece positions, 
+    piece values, board control and piece density. Puts emphasis on the value of single pieces, as they have higher weighting. 
+
+    Parameters:
+        - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+        - player (str): The current player ('b' for blue, 'r' for red) being evaluated.
+
+    Returns:
+        float: The evaluation score of the board state. A positive score favors the blue player, while a negative score favors the red player.
+               Returns float('inf') if the blue player wins, and float('-inf') if the red player wins.
+    """
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -206,11 +242,12 @@ def evaluateLategame(board, player):
         for col in range(8):
             piece = board[row, col]
             if piece in pieces:
+                # Red piece on the last row
                 if row == 7 and piece in ['r', 'rr', 'br']:
-                    return float('-inf')  # Red wins
-
+                    return float('-inf')                  
+                # Blue piece on the first row
                 if row == 0 and piece in ['b', 'bb', 'rb']:
-                    return float('inf')  # Blue wins
+                    return float('inf')                 
 
                 if piece == 'r':
                     value -= ((1.5 ** row) * 0.3) + 1.25
@@ -233,13 +270,25 @@ def evaluateLategame(board, player):
 
     under_attack_penalty, density_bonus = piece_under_attack_density(board, player)
     value -= under_attack_penalty * 0.5
-    value += density_bonus * 0.1  
+    value += density_bonus * 0.05  
     return value
 
 def piece_under_attack_density(board, player):
-    """Calculate both the number of friendly pieces under attack and the piece density in one pass."""
+    """
+    Calculates the number of pieces belonging to the player that are under attack and the average squared distance between all pieces on the board.
+    This function iterates through the board to identify pieces under attack by checking adjacent positions based on predefined attack vectors. 
+    It also calculates the average squared distance between all pieces on the board to assess piece density. This dual calculation is performed in a single pass for efficiency.
+    Parameters:
+    - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+    - player (str): The player ('r' for red or 'b' for blue) for whom to calculate the under-attack status and piece density.
+    
+    Returns:
+        tuple: A tuple containing two elements:
+            - The first element is an integer representing the number of pieces belonging to the player that are under attack.
+            - The second element is a float representing the average squared distance between all pieces on the board, which serves as a measure of piece density.
+    """
     enemy = 'b' if player == 'r' else 'r'
-    attack_positions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]
+    attack_positions = [(1, -1), (1, 1), (-1, -1), (-1, 1)] # Define attack vectors for adjacent positions
     under_attack = 0
     positions = []
     total_distance_squared = 0
@@ -252,8 +301,9 @@ def piece_under_attack_density(board, player):
             current_piece = board[row][col]
             if current_piece == '':
                 continue
-            positions.append((col, row))
-            if current_piece.startswith(player):
+            positions.append((col, row)) # Add position to the list for density calculation
+            if current_piece.startswith(player): # Check if the piece belongs to the current player
+                # Check adjacent positions for enemy pieces to determine if the current piece is under attack
                 for d_row, d_col in attack_positions:
                     adj_row, adj_col = row + d_row, col + d_col
                     if 0 <= adj_row < board_size and 0 <= adj_col < row_size:
@@ -263,6 +313,7 @@ def piece_under_attack_density(board, player):
                             break
 
     num_positions = len(positions)
+    # Calculate the sum of squared distances between all pairs of pieces
     for i in range(num_positions):
         for j in range(i + 1, num_positions):
             x1, y1 = positions[i]
@@ -270,11 +321,23 @@ def piece_under_attack_density(board, player):
             distance_squared = (x2 - x1) ** 2 + (y2 - y1) ** 2
             total_distance_squared += distance_squared
 
+    # Calculate the average squared distance between all pairs of pieces
     avg_distance_squared = total_distance_squared / (num_positions * (num_positions - 1) / 2) if num_positions > 1 else 0
 
     return under_attack, avg_distance_squared
 
 def evaluateFREFseite(board, player):
+    """
+    Experimental evaluation, taking into account piece positions and piece values, while putting focus on overloading one side of the board 
+    to damamge the opponents structure.
+    Parameters:
+        - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+        - player (str): The current player ('b' for blue, 'r' for red) being evaluated.
+
+    Returns:
+        float: The evaluation score of the board state. A positive score favors the blue player, while a negative score favors the red player.
+               Returns float('inf') if the blue player wins, and float('-inf') if the red player wins.
+    """
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
 
@@ -301,11 +364,11 @@ def evaluateFREFseite(board, player):
         for col in range(8):
             piece = board[row, col]
             if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                # Red piece on the last row
                 if row == 7 and piece in ['r', 'rr', 'br']:
                     return float('-inf')  # Red wins
 
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                # Blue piece on the first row
                 if row == 0 and piece in ['b', 'bb', 'rb']:
                     return float('inf')  # Blue wins
 

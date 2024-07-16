@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import keras
 from keras import layers
 from board import fen_to_board
-from gamestate import evaluateFREF
+from move_selection import evaluateFREF
 import keras
 from tensorflow import keras
 

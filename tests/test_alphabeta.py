@@ -7,7 +7,7 @@ import time
 import unittest
 import timeit
 from board import fen_to_board
-from gamestate import select_move, select_moveTEST
+from move_selection import select_move, select_moveTEST
 from evaluate import evaluate
 import cProfile
 import pstats

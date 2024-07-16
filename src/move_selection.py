@@ -48,19 +48,17 @@ def game_over(board, player):
     - bool: True if the game is over (a red piece is on the last row or a blue piece is on the first row), False otherwise.
     """
     
-    # Check if a red piece is on the last row
     for col in range(8):
-        piece = board[7, col]  # Access the piece in the last row and current column
-        if piece in ['r', 'rr', 'br']:  # Check if the piece is a red piece (including promoted and both-color pieces)
+        piece = board[7, col]  
+        if piece in ['r', 'rr', 'br']:  
             return True  # Game is over if a red piece is found on the last row
 
-    # Check if a blue piece is on the first row
     for col in range(8):
-        piece = board[0, col]  # Access the piece in the first row and current column
-        if piece in ['b', 'bb', 'rb']:  # Check if the piece is a blue piece (including promoted and both-color pieces)
+        piece = board[0, col]  
+        if piece in ['b', 'bb', 'rb']:  
             return True  # Game is over if a blue piece is found on the first row
 
-    return False  # If no winning conditions are met, the game is not over
+    return False  
 
 
 def check_gamestate(board):
@@ -262,7 +260,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     """
     if time.time() - start_time > max_time:
         return None, None, False, 0  
-    nodes_explored = 1 # 1 für aktuelles board
+    nodes_explored = 1 
 
 
     
@@ -281,7 +279,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
 
-    if not moves or game_over(board, player): # or depth==0 jetzt in ruhesuche
+    if not moves or game_over(board, player): 
         eval = evalDynamic(board,player)
         tt.store(zobrist_hash, depth, eval, EXACT, None)
         return eval, None, True, nodes_explored
@@ -389,7 +387,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     total_nodes_explored = 0 # for testing
     aspiration_window = 100 # toggled off
 
-    while True:
+    while True: # check if board position is in opening book
         if depth > max_depth:
             break
         fen = board_to_fen(board, player)
@@ -475,12 +473,12 @@ def select_move(fen,remaining_time):
         Tuple: The best move determined by the iterative deepening alpha-beta search, formatted as a tuple (e.g., "((2,2), (4,2))").
     """
     global total_game_time
-    remaining_time = remaining_time / 1000 
+    remaining_time = remaining_time / 1000 #ms
 
     #remaining_time = 1000000 # for testing!
     #total_game_time = 1000000 # for testing!
 
-    max_depth = 7  # for testing
+    max_depth = 15  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     tt = TranspositionTable()
