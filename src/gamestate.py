@@ -21,18 +21,13 @@ def random_move(fen):
     - str or None: A random legal move for the current player in algebraic notation if there are any legal moves available.
       Returns None if there are no legal moves available (e.g., in a checkmate or stalemate situation).
     """
-    
-    # Convert the FEN string to a board representation and determine the current player
+
     board, player = fen_to_board(fen)
-    
-    # Retrieve the first element from the tuple returned by legal_moves, which contains all legal moves for the player
     moves = legal_moves(board, player)[0]
-    
-    # If there are no legal moves available, return None
+
     if not moves:
         return None
-    
-    # Otherwise, return a random move from the list of legal moves
+
     return random.choice(moves)
 
 
