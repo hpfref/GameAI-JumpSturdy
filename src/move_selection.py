@@ -238,6 +238,8 @@ opening_book = load_opening_book()
 
 ##### MAIN ALPHA BETA 
 
+pv = PrincipleVariaition()
+
 def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, start_time, max_time, tt, zobrist_hash):
     """
     Description:
@@ -258,6 +260,11 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     Returns:
         tuple: A tuple containing the evaluation of the best move, the best move itself, a boolean indicating if the search was completed, and the number of nodes explored.
     """
+    
+
+    global pv            # Including Principle Variation
+    
+    
     if time.time() - start_time > max_time:
         return None, None, False, 0  
     nodes_explored = 1 
@@ -278,6 +285,18 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
                 return tt_value, tt_best_move, True, nodes_explored
             
     moves, is_quiescent, stack_capture, single_capture = legal_moves(board, player) 
+
+
+
+    # Sorting moves based on PV
+    if len(pv.pv) > depth:
+        best_move = pv.pv[depth]
+        if best_move in moves:
+            moves.remove(best_move)
+            moves.insert(0, best_move)
+
+
+    
 
     if not moves or game_over(board, player): 
         eval = evalDynamic(board,player)
@@ -328,6 +347,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             if eval > max_eval:
                 max_eval = eval
                 best_move = move
+                pv.update(depth,move)
             alpha = max(alpha, eval)
             if beta <= alpha:  
                 break
@@ -351,6 +371,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             if eval < min_eval:
                 min_eval = eval
                 best_move = move
+                pv.update(depth,move)
             beta = min(beta, eval)
             if beta <= alpha:  
                 break
@@ -380,6 +401,12 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     Returns:
         tuple: A tuple containing the best move found within the time limit, the depth reached during the search, and the total number of nodes explored.
     """
+    
+    
+    
+    global pv
+    pv.clear()
+    
     start_time = time.time()
     depth = 1
     best_move = None
@@ -453,6 +480,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
         depth += 1
 
     print(f"Best value: {best_value}, Total nodes explored: {total_nodes_explored}")
+    print(f"Principal Variation: {pv.get(depth)}")
     return best_move, depth-1, total_nodes_explored
 
 total_game_time = 120  # Total game time in s
@@ -472,7 +500,7 @@ def select_move(fen,remaining_time):
     Returns:
         Tuple: The best move determined by the iterative deepening alpha-beta search, formatted as a tuple (e.g., "((2,2), (4,2))").
     """
-    global total_game_time
+    global total_game_time, pv
     remaining_time = remaining_time / 1000 #ms
 
     #remaining_time = 1000000 # for testing!
