@@ -1,5 +1,0 @@
-legal_moves & alpha beta refac -> fen_to_board verwendung minimieren
-
-legal_moves refac -> zugsortierung & moves liste als deque & indexing 
-
-
