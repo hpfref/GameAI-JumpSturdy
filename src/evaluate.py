@@ -1,7 +1,19 @@
 import math 
 
 def evaluate(board, player):
-    # piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # dunno
+    """
+    Evaluates the board state for a given player, taking into account piece positions,  and piece values. Puts emphasis on piece development.
+    First version of our evaluation function. Still in the code for reference, but not used in the final version.
+
+    Parameters:
+        - board (2D Array): Responsible for storing the current state of the board, including the placement of pieces and special fields.
+        - player (str): The current player ('b' for blue, 'r' for red) being evaluated.
+
+    Returns:
+        float: The evaluation score of the board state. A positive score favors the blue player, while a negative score favors the red player.
+               Returns float('inf') if the blue player wins, and float('-inf') if the red player wins.
+    """
+    # piece_values = {'r': -1, 'rr': -2, 'br': -1.5, 'b': 1, 'bb': 2, 'rb': 1.5} # to be refined
     pieces = ['r', 'rr', 'br', 'b', 'bb', 'rb']
     value = 0
     # red_moves = legal_moves(board, 'r')
@@ -13,17 +25,17 @@ def evaluate(board, player):
         for col in range(8):
             piece = board[row, col]
             if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                # Red piece on the last row
                 if row == 7 and piece in ['r', 'rr', 'br']:
                     # helper_eval['Win'] = float('-inf')
                     return float('-inf')  # Red wins
 
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                # Blue piece on the first row
                 if row == 0 and piece in ['b', 'bb', 'rb']:
                     # helper_eval['Win'] = float('inf')
                     return float('inf')  # Blue wins
 
-                # Position ((1.5**row) * 0.2) + Materialwert + ?
+                # Position ((1.5**row) * 0.2) + Material + ?
                 if piece == 'r':
                     # helper_eval['Position'] -= ((1.5**row) * 0.2)
                     # helper_eval['Material'] -= 1
@@ -47,15 +59,12 @@ def evaluate(board, player):
                 elif piece == 'br':
                     # helper_eval['Position'] -= ((1.5**row) * 0.2)
                     value -= ((
-                                          1.5 ** row) * 0.2) + 0  # mby troll aktuell gibts hier nur punkte für rot und materialwert von b und r gleichen sich aus -> durch faktor steuern
+                                          1.5 ** row) * 0.2) + 0 
 
                 elif piece == 'rb':
-                    # helper_eval['Position'] += ((1.5**row) * 0.2) # same
+                    # helper_eval['Position'] += ((1.5**row) * 0.2) 
                     value += ((1.5 ** (7 - row)) * 0.2) + 0
 
-                # 123
-
-    # Mobilität berücksichtigen
     # helper_eval['Mobility'] = 0.1 * len(blue_moves) - 0.1 * len(red_moves)
     # value -= 0.1 * len(red_moves)
     # value += 0.1 * len(blue_moves)
@@ -104,11 +113,11 @@ def evaluateEarlygame(board, player):
         for col in range(8):
             piece = board[row, col]
             if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                # Red piece on the last row
                 if row == 7 and piece in ['r', 'rr', 'br']:
                     return float('-inf')  # Red wins
 
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                # Blue piece on the first row
                 if row == 0 and piece in ['b', 'bb', 'rb']:
                     return float('inf')  # Blue wins
 
@@ -171,11 +180,11 @@ def evaluateMidgame(board, player):
         for col in range(8):
             piece = board[row, col]
             if piece in pieces:
-                # Überprüfen, ob ein rotes Stück auf der letzten Reihe ist
+                # Red piece on the last row
                 if row == 7 and piece in ['r', 'rr', 'br']:
                     return float('-inf')  # Red wins
 
-                # Überprüfen, ob ein blaues Stück auf der ersten Reihe ist
+                # Blue piece on the first row
                 if row == 0 and piece in ['b', 'bb', 'rb']:
                     return float('inf')  # Blue wins
 
