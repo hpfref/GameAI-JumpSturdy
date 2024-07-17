@@ -25,7 +25,7 @@ def legal_moves(board, player):
 
     ### BLUE CASE START ###
 
-    if player == "b": # viel doppelter code durch case blue/red
+    if player == "b": 
         # Get indices of blue pieces
         indices_b = np.where((board == "b") | (board == "bb") | (board == "rb")) # consider rb as blue piece for this move
 

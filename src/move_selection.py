@@ -293,7 +293,7 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
     
     global current_iterative_max_depth # too expensive to do quiesence search for depths 1,2,3
 
-    if depth==0: # RUHESUCHE ab horizont
+    if depth==0: # quiesence search from horizon 
         #return evalDynamic(board,player), None, True, nodes_explored # uncomment to disable quiscent search
         if current_iterative_max_depth >= 4 and not is_quiescent: # if there are captures possible and searching depth of min. 4
             eval_quiescence, child_nodes_explored = quiescence_search(board, player, stack_capture, single_capture)
@@ -671,7 +671,7 @@ def iterative_deepening_min_max_search(board, player, max_time, max_depth, maxim
 
 def select_min_max_move(fen):
     max_time = 1000000  # Maximum time in seconds for each move
-    max_depth = 2  # for testing
+    max_depth = 4  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     best_move, searched_depth, nodes_explored = iterative_deepening_min_max_search(board, player, max_time, max_depth, maximizing_player)
