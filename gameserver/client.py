@@ -9,7 +9,7 @@ import json
 from network import Network
 pygame.font.init()
 
-from move_selection import select_move, select_moveTEST
+from move_selection import select_move
 from move_gen import translate_single_move
                 
 def main():

@@ -337,12 +337,12 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             target_value = board[move[1]] # save target field value e.g. r
             new_player = make_move(board, player, move, start_value, target_value)
             new_zobrist_hash = tt.update_zobrist_hash(zobrist_hash, move, board, player)
-            #eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time, tt, new_zobrist_hash)
+            # eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time, tt, new_zobrist_hash)
             if first:
                 eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time, tt, new_zobrist_hash)
                 first = False
             else:
-                eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, alpha + 1, False, start_time, max_time, tt, new_zobrist_hash)
+                eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, alpha + 0.01, False, start_time, max_time, tt, new_zobrist_hash)
                 if eval > alpha and eval < beta:
                     eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, False, start_time, max_time, tt, new_zobrist_hash)
 
@@ -370,12 +370,12 @@ def alpha_beta_search(board, player, depth, alpha, beta, maximizing_player, star
             target_value = board[move[1]] # save target field value e.g. b
             new_player = make_move(board, player, move, start_value, target_value)
             new_zobrist_hash = tt.update_zobrist_hash(zobrist_hash, move, board, player)
-            #eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time, tt, new_zobrist_hash)
+            # eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time, tt, new_zobrist_hash)
             if first:
                 eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time, tt, new_zobrist_hash)
                 first = False
             else:
-                eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, beta - 1, beta, True, start_time, max_time, tt, new_zobrist_hash)
+                eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, beta - 0.01, beta, True, start_time, max_time, tt, new_zobrist_hash)
                 if eval > alpha and eval < beta:
                     eval, _, completed, child_nodes_explored = alpha_beta_search(board, new_player, depth - 1, alpha, beta, True, start_time, max_time, tt, new_zobrist_hash)
             
@@ -425,7 +425,7 @@ def iterative_deepening_alpha_beta_search(board, player, max_time, max_depth, ma
     best_move = None
     best_value = float('-inf') if maximizing_player else float('inf')
     total_nodes_explored = 0 # for testing
-    aspiration_window = 100 # toggled off with high value, we now use 
+    aspiration_window = 100 # toggled off with high value, we now use PVS instead
 
     while True: # check if board position is in opening book
         if depth > max_depth:
@@ -519,7 +519,7 @@ def select_move(fen,remaining_time):
     #remaining_time = 1000000 # for testing!
     #total_game_time = 1000000 # for testing!
 
-    max_depth = 10  # for testing
+    max_depth = 4  # for testing
     board, player = fen_to_board(fen)
     maximizing_player = player == 'b'
     tt = TranspositionTable()
